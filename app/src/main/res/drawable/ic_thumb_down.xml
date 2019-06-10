@@ -1,0 +1,44 @@
+<!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2019 Razil
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M16,15.2602C16,15.7376 15.8292,16.1992 15.5185,16.5617L10.7276,22.1511C10.3,22.65 9.5877,22.7939 9,22.5C8.4262,22.2131 8.1507,21.5479 8.3536,20.9393L10,16L5.3964,16C5.2764,16 5.1567,15.9892 5.0387,15.9677C3.9519,15.7701 3.2311,14.729 3.4287,13.6422L4.7014,6.6422C4.8743,5.6912 5.7026,5 6.6692,5L14,5C15.1046,5 16,5.8954 16,7L16,15.2602Z"
+      android:strokeLineJoin="miter"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="#EEE"
+      android:strokeLineCap="square"/>
+  <path
+      android:pathData="M20,15L20,6"
+      android:strokeLineJoin="miter"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="#EEE"
+      android:strokeLineCap="square"/>
+</vector>

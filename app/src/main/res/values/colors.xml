@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2019 Razil
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<resources>
+  <color name="colorPrimary">#2E2E2E</color>
+  <color name="colorPrimaryDark">#212121</color>
+  <color name="colorAccent">@color/rally_purple</color>
+  <!--<color name="colorAccent">#FA6F6A</color>-->
+  <color name="blue_grey_800">#ff37474f</color>
+  <color name="blue_grey_900">#ff263238</color>
+  <color name="blue_grey_950">#ff21272b</color>
+  <color name="deep_teal_200">#ff80cbc4</color>
+  <color name="deep_teal_500">#ff008577</color>
+  <color name="grey_100">#fff5f5f5</color>
+  <color name="grey_300">#ffe0e0e0</color>
+  <color name="grey_50">#fffafafa</color>
+  <color name="grey_600">#ff757575</color>
+  <color name="grey_800">#ff424242</color>
+  <color name="grey_850">#ff303030</color>
+  <color name="grey_900">#ff212121</color>
+  <color name="owl_pink">#FF0266</color>
+  <color name="bay_leaf">#87b38d</color>
+  <color name="acid_green">#6E918D</color>
+  <color name="acid_green_light">#95aeab</color>
+  <color name="mid_grey">#40808080</color>
+  <color name="blue_grey">#8ca0aa</color>
+  <color name="rally_green">#1EB980</color>
+  <color name="rally_orange">#FF6859</color>
+  <color name="rally_purple">#B15DFF</color>
+  <color name="rally_blue">#72DEFF</color>
+  <color name="downvote">#7193FF</color>
+  <color name="downvote50">#d7e0ff</color>
+  <color name="upvote">#FF4500</color>
+  <color name="upvote50">#ffc1aa</color>
+  <color name="color_sub_bg">#1E1E1E</color>
+  <color name="color_swipe_secondary">#262626</color>
+  <color name="color_vh">#1E1E1E</color>
+  <color name="colorTextSecondary">#888</color>
+</resources>
