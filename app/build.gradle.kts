@@ -126,6 +126,7 @@ dependencies {
     implementation(Libs.inboxrecyclerview)
     implementation(Libs.flick)
     implementation("com.makeramen:roundedimageview:2.3.0")
+    implementation("com.ibm.icu:icu4j:62.1")
     debugImplementation(Libs.tinydancer)
     releaseImplementation(Libs.tinydancer_noop)
 

@@ -24,6 +24,7 @@
 
 package dev.razil.folio.core.data
 
+import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.Insert
@@ -51,11 +52,14 @@ data class Post(
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM Post")
-    suspend fun getAll(): List<Post>
+    @Query("SELECT * FROM Post ORDER BY pid")
+    fun getAll(): DataSource.Factory<Int, Post>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(posts: List<Post>)
+    fun insert(posts: List<Post>)
+
+    @Query("DELETE FROM Post")
+    fun clear()
 
 }
 

@@ -25,6 +25,7 @@
 package dev.razil.folio
 
 import android.app.Application
+import com.codemonkeylabs.fpslibrary.TinyDancer
 import dev.razil.folio.core.di.DaggerAppComponent
 import dev.razil.folio.util.Ext
 import timber.log.Timber
@@ -39,6 +40,7 @@ class Folio : Application() {
             Timber.plant(Timber.DebugTree())
         }
         Ext.with(this)
+        TinyDancer.create().show(this)
     }
 
 

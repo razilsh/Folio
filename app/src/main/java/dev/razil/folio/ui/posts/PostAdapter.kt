@@ -47,10 +47,6 @@ class PostAdapter : ListAdapter<Post, PostAdapter.Holder>(DiffCallback) {
         holder.bind(post)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return R.layout.post_item
-    }
-
     override fun getItemId(position: Int): Long {
         return getItem(position).pid
     }
@@ -59,17 +55,16 @@ class PostAdapter : ListAdapter<Post, PostAdapter.Holder>(DiffCallback) {
         private val textCreator = PostTextCreator()
 
         fun bind(post: Post) {
+            binding.executePendingBindings()
             if (post.submission.hasThumbnail()) {
-                binding.thumbnail.loadInTarget(post.submission.thumbnail)
+                 binding.thumbnailView.loadInTarget(post.submission.thumbnail)
             }
 
-            textCreator.title(binding.title, post)
-            textCreator.topText(binding.topText, post)
-            textCreator.author(binding.author, post)
-            textCreator.comment(binding.comments, post)
-            textCreator.score(binding.score, post)
-            // Important
-            binding.executePendingBindings()
+            textCreator.title(binding.titleView, post)
+            textCreator.topText(binding.subredditView, post)
+            textCreator.author(binding.authorView, post)
+            textCreator.comment(binding.commentsView, post)
+            textCreator.score(binding.scoreView, post)
         }
     }
 

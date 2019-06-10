@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
   ~ Copyright (c) 2019 Razil
@@ -22,19 +22,16 @@
   ~ SOFTWARE.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="@color/color_vh"
+  android:gravity="center"
+  android:orientation="vertical"
+  android:padding="24dp">
 
-  <data>
-
-    <variable
-      name="postText"
-      type="android.text.Spannable" />
-  </data>
-
-  <TextView
-    android:layout_margin="16dp"
-    android:id="@+id/post_text"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="@{postText}" />
-</layout>
+  <androidx.core.widget.ContentLoadingProgressBar
+    style="@style/Widget.AppCompat.ProgressBar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+</LinearLayout>

@@ -25,17 +25,18 @@
 package dev.razil.folio.ui.posts
 
 import android.graphics.Color
-import android.text.style.ForegroundColorSpan
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.PrecomputedTextCompat
 import androidx.core.widget.TextViewCompat
+import com.ibm.icu.text.CompactDecimalFormat
 import dev.razil.folio.R
 import dev.razil.folio.core.data.Post
 import dev.razil.folio.util.Spanny
 import dev.razil.folio.util.getColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
-import java.lang.ref.WeakReference
+import java.util.*
 import java.util.concurrent.Executors
 
 class PostTextCreator : CoroutineScope by MainScope() {
@@ -46,15 +47,17 @@ class PostTextCreator : CoroutineScope by MainScope() {
     private val space = "\u0020"
     private val separator = "\u0020\u0020\uA78F\u0020\u0020"
     private val executor = Executors.newSingleThreadExecutor()
+    private val numberFormatter = CompactDecimalFormat.getInstance(
+        Locale.getDefault(),
+        CompactDecimalFormat.CompactStyle.SHORT
+    )
 
     fun title(textView: TextView, post: Post) {
         preCompute(textView, post.getTitle())
     }
 
     fun topText(textView: TextView, post: Post) {
-        val subreddit =
-            Spanny.spanText("r/${post.submission.subreddit}", ForegroundColorSpan(blueGrey))
-        preCompute(textView, subreddit)
+        preCompute(textView, "r/${post.subreddit}")
     }
 
 
@@ -64,25 +67,19 @@ class PostTextCreator : CoroutineScope by MainScope() {
     }
 
     fun comment(textView: TextView, post: Post) {
-        val comments = post.submission.commentCount.toString()
+        val comments = numberFormatter.format(post.submission.commentCount)
         preCompute(textView, comments)
     }
 
     private fun preCompute(textView: TextView, text: CharSequence) {
         val params = TextViewCompat.getTextMetricsParams(textView)
-        val ref: WeakReference<TextView> = WeakReference(textView)
-        executor.submit {
-            val tv = ref.get() ?: return@submit
-            val precomputedText = PrecomputedTextCompat.create(text, params)
-            tv.post {
-                val _tv = ref.get() ?: return@post
-                _tv.text = precomputedText
-            }
-        }
+        val future = PrecomputedTextCompat.getTextFuture(text, params, executor)
+        (textView as? AppCompatTextView)?.setTextFuture(future)
     }
 
     fun score(textView: TextView, post: Post) {
-        preCompute(textView, post.score.toString())
+        val score = numberFormatter.format(post.score)
+        preCompute(textView, score)
     }
 
 }

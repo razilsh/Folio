@@ -22,36 +22,28 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui.posts
+package dev.razil.folio.core.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import dev.razil.folio.core.Fail
-import dev.razil.folio.core.Loading
-import dev.razil.folio.core.Result
-import dev.razil.folio.core.Success
-import dev.razil.folio.core.data.Post
+import androidx.paging.PagedList
 import dev.razil.folio.core.repository.PostRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
-class PostViewModel @Inject constructor(private val repository: PostRepository) : ViewModel() {
+class PostBoundaryCallback @Inject constructor(private val repository: PostRepository) :
+    PagedList.BoundaryCallback<Post>(), CoroutineScope by GlobalScope {
 
-    private val _posts = MutableLiveData<Result<List<Post>>>()
-    val posts: LiveData<Result<List<Post>>> = _posts
-
-    init {
-        loadMore()
+    override fun onZeroItemsLoaded() {
+        super.onZeroItemsLoaded()
+        Timber.i("Called")
+        launch { repository.refresh() }
     }
 
-    private fun loadMore() = viewModelScope.launch {
-        _posts.value = Loading()
-        try {
-            _posts.postValue(Success(repository.listing()))
-        } catch (e: Exception) {
-            _posts.postValue(Fail(e))
-        }
+    override fun onItemAtEndLoaded(itemAtEnd: Post) {
+        super.onItemAtEndLoaded(itemAtEnd)
+        Timber.i("Called")
+        launch { repository.loadMore(itemAtEnd, this@PostBoundaryCallback) }
     }
 }

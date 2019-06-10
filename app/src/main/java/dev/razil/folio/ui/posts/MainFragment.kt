@@ -41,6 +41,7 @@ import dev.razil.folio.core.Incomplete
 import dev.razil.folio.core.Success
 import dev.razil.folio.core.di.DaggerViewModelFactory
 import dev.razil.folio.databinding.MainFragmentBinding
+import dev.razil.folio.itemanimators.SlideUpAlphaAnimator
 import dev.razil.folio.itemanimators.wia.SlideInUpAnimator
 import dev.razil.folio.ui.binding.bind
 import dev.razil.folio.util.divider
@@ -69,11 +70,11 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
+        
         val postAdapter = PostAdapter().apply { setHasStableIds(true) }
         binding.submissionsView.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            itemAnimator = SlideInUpAnimator()
+            itemAnimator = SlideUpAlphaAnimator()
             addItemDecoration(divider(R.drawable.divider))
         }
 

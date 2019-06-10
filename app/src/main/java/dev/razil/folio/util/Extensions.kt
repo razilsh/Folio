@@ -27,12 +27,16 @@
 package dev.razil.folio.util
 
 import android.graphics.drawable.Drawable
+import android.view.View
 import android.widget.ImageView
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.transition.Transition
+import dev.razil.folio.core.Result
+import dev.razil.folio.core.data.Post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.flowViaChannel
@@ -55,17 +59,18 @@ fun RecyclerView.onLoadMore(threshold: Int = 3) = flowViaChannel<Unit> { channel
 fun RecyclerView.LayoutManager.toLinearLayoutManager() = this as LinearLayoutManager
 
 fun ImageView.loadInTarget(url: String?) {
-    if (url.isNullOrBlank()) return
-
+    if (url.isNullOrBlank()) {
+        visibility = View.GONE
+        return
+    }
+    visibility = View.VISIBLE
     Glide.with(this).load(url).into(
         object : CustomViewTarget<ImageView, Drawable>(this) {
             override fun onLoadFailed(errorDrawable: Drawable?) {
-
+                visibility = View.GONE
             }
 
-            override fun onResourceCleared(placeholder: Drawable?) {
-
-            }
+            override fun onResourceCleared(placeholder: Drawable?) {}
 
             override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                 setImageDrawable(resource)
@@ -74,3 +79,5 @@ fun ImageView.loadInTarget(url: String?) {
         }
     )
 }
+
+typealias PostRequest = LiveData<Result<List<Post>>>

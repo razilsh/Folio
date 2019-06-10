@@ -24,8 +24,10 @@
 
 package dev.razil.folio.core.repository
 
+import androidx.paging.toLiveData
 import dev.razil.folio.core.data.FolioDatabase
 import dev.razil.folio.core.data.Post
+import dev.razil.folio.core.data.PostBoundaryCallback
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.dean.jraw.RedditClient
@@ -37,7 +39,7 @@ class PostRepository @Inject constructor(
     private val database: FolioDatabase
 ) {
     private val redditClient: RedditClient by lazy { getClient() }
-    private val submissionPaginator by lazy { redditClient.frontPage().limit(10).build() }
+    private val submissionPaginator by lazy { redditClient.frontPage().build() }
 
     suspend fun listing() = withContext(Dispatchers.IO) {
         val page = submissionPaginator.next()
@@ -47,10 +49,30 @@ class PostRepository @Inject constructor(
         }
     }
 
-    fun refresh() = submissionPaginator.restart()
+    suspend fun refresh() = withContext(Dispatchers.IO) {
+        /*submissionPaginator.restart()
+        val page = submissionPaginator.next()
+        val posts = page.map { Post(sid = it.id, submission = it) }
+        database.runInTransaction {
+            database.posts().clear()
+            database.posts().insert(posts)
+        }*/
+    }
+
+    suspend fun loadMore(post: Post? = null, boundaryCallback: PostBoundaryCallback) =
+        withContext(Dispatchers.IO) {
+
+            database.posts()
+                .getAll()
+                .toLiveData(pageSize = DB_PAGE_SIZE, boundaryCallback = boundaryCallback)
+        }
 
     private fun getClient(userLess: Boolean = true): RedditClient = when (userLess) {
         true -> accountHelper.switchToUserless()
         else -> accountHelper.switchToUser(accountHelper.reddit.requireAuthenticatedUser())
+    }
+
+    companion object {
+        private const val DB_PAGE_SIZE = 30
     }
 }
