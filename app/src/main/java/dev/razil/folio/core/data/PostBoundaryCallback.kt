@@ -44,6 +44,6 @@ class PostBoundaryCallback @Inject constructor(private val repository: PostRepos
     override fun onItemAtEndLoaded(itemAtEnd: Post) {
         super.onItemAtEndLoaded(itemAtEnd)
         Timber.i("Called")
-        launch { repository.loadMore(itemAtEnd, this@PostBoundaryCallback) }
+        launch { repository.loadMore() }
     }
 }

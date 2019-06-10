@@ -26,15 +26,15 @@ package dev.razil.folio.ui.posts
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import dev.razil.folio.R
 import dev.razil.folio.core.data.Post
 import dev.razil.folio.databinding.PostItemBinding
 import dev.razil.folio.util.loadInTarget
 
-class PostAdapter : ListAdapter<Post, PostAdapter.Holder>(DiffCallback) {
+class PostAdapter(private val onClick: (Post) -> Unit = {}) :
+    PagedListAdapter<Post, PostAdapter.Holder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflater = LayoutInflater.from(parent.context)
@@ -48,16 +48,24 @@ class PostAdapter : ListAdapter<Post, PostAdapter.Holder>(DiffCallback) {
     }
 
     override fun getItemId(position: Int): Long {
-        return getItem(position).pid
+        return getItem(position)?.pid?.toLong() ?: 0
     }
 
-    class Holder(private val binding: PostItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class Holder(private val binding: PostItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         private val textCreator = PostTextCreator()
+
+        init {
+            binding.root.setOnClickListener {
+                val post = getItem(adapterPosition) ?: return@setOnClickListener
+                onClick(post)
+            }
+        }
 
         fun bind(post: Post) {
             binding.executePendingBindings()
             if (post.submission.hasThumbnail()) {
-                 binding.thumbnailView.loadInTarget(post.submission.thumbnail)
+                binding.thumbnailView.loadInTarget(post.submission.thumbnail)
             }
 
             textCreator.title(binding.titleView, post)

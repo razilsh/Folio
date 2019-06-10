@@ -28,16 +28,12 @@
 
   <data>
 
-    <variable
-      name="viewModel"
-      type="dev.razil.folio.ui.posts.PostViewModel" />
-
-    <import type="dev.razil.folio.ui.binding.ExtensionsKt" />
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/color_vh">
 
     <me.saket.inboxrecyclerview.InboxRecyclerView
       android:id="@+id/submissionsView"
@@ -49,7 +45,7 @@
       app:layout_constraintTop_toTopOf="parent"
       tools:listitem="@layout/post_item" />
 
-    <ProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
       android:id="@+id/progressBar"
       style="?android:attr/progressBarStyle"
       android:layout_width="wrap_content"
@@ -58,8 +54,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintVertical_bias="0.39"
-      app:visibleIf="@{viewModel.posts}" />
+      app:layout_constraintVertical_bias="0.39" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

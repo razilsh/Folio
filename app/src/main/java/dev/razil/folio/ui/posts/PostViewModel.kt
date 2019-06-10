@@ -25,33 +25,19 @@
 package dev.razil.folio.ui.posts
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import dev.razil.folio.core.Fail
-import dev.razil.folio.core.Loading
-import dev.razil.folio.core.Result
-import dev.razil.folio.core.Success
+import androidx.lifecycle.liveData
+import androidx.paging.PagedList
 import dev.razil.folio.core.data.Post
+import dev.razil.folio.core.data.PostBoundaryCallback
 import dev.razil.folio.core.repository.PostRepository
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PostViewModel @Inject constructor(private val repository: PostRepository) : ViewModel() {
 
-    private val _posts = MutableLiveData<Result<List<Post>>>()
-    val posts: LiveData<Result<List<Post>>> = _posts
+    private val cb = PostBoundaryCallback(repository)
 
-    init {
-        loadMore()
-    }
-
-    private fun loadMore() = viewModelScope.launch {
-        _posts.value = Loading()
-        try {
-            _posts.postValue(Success(repository.listing()))
-        } catch (e: Exception) {
-            _posts.postValue(Fail(e))
-        }
+    val posts: LiveData<PagedList<Post>> = liveData {
+        emitSource(repository.loadMore(boundaryCallback = cb))
     }
 }

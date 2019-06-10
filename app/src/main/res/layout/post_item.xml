@@ -56,6 +56,7 @@
     android:background="@color/color_vh"
     android:clickable="true"
     android:focusable="true"
+    android:foreground="?selectableItemBackground"
     android:padding="16dp"
     tools:ignore="UnusedAttribute"
     tools:layout_height="match_parent"

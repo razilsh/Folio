@@ -22,16 +22,23 @@
   ~ SOFTWARE.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:background="@color/color_vh"
-  android:gravity="center"
-  android:orientation="vertical"
-  android:padding="24dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <androidx.core.widget.ContentLoadingProgressBar
-    style="@style/Widget.AppCompat.ProgressBar"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
-</LinearLayout>
+  <data>
+
+  </data>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_vh"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <androidx.core.widget.ContentLoadingProgressBar
+      android:id="@+id/progressBar"
+      style="@style/Widget.AppCompat.ProgressBar"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content" />
+  </LinearLayout>
+</layout>

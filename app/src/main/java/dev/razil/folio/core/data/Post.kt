@@ -42,7 +42,7 @@ import net.dean.jraw.references.SubmissionReference
 @TypeConverters(EntityConverter::class)
 data class Post(
     @PrimaryKey(autoGenerate = true)
-    val pid: Long = 0,
+    val pid: Int = 0,
     val sid: String,
     val submission: Submission
 ) : PublicContribution<SubmissionReference> by submission {

@@ -24,7 +24,14 @@
 
 package dev.razil.folio.core.repository
 
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.toLiveData
+import dev.razil.folio.core.Fail
+import dev.razil.folio.core.Loading
+import dev.razil.folio.core.Result
+import dev.razil.folio.core.Success
+import dev.razil.folio.core.Uninitialized
 import dev.razil.folio.core.data.FolioDatabase
 import dev.razil.folio.core.data.Post
 import dev.razil.folio.core.data.PostBoundaryCallback
@@ -32,6 +39,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.dean.jraw.RedditClient
 import net.dean.jraw.oauth.AccountHelper
+import java.io.IOException
 import javax.inject.Inject
 
 class PostRepository @Inject constructor(
@@ -39,29 +47,57 @@ class PostRepository @Inject constructor(
     private val database: FolioDatabase
 ) {
     private val redditClient: RedditClient by lazy { getClient() }
-    private val submissionPaginator by lazy { redditClient.frontPage().build() }
+    private val submissionPaginator by lazy { redditClient.frontPage().limit(10).build() }
+
+    val networkStatus = MutableLiveData<Result<Unit>>(Uninitialized)
+    val mediator = MediatorLiveData<Result<Unit>>()
 
     suspend fun listing() = withContext(Dispatchers.IO) {
         val page = submissionPaginator.next()
         page.mapIndexed { index, submission ->
-            val pid = index.toLong()
-            Post(pid, submission.id, submission)
+            Post(index, submission.id, submission)
         }
     }
 
     suspend fun refresh() = withContext(Dispatchers.IO) {
-        /*submissionPaginator.restart()
-        val page = submissionPaginator.next()
-        val posts = page.map { Post(sid = it.id, submission = it) }
-        database.runInTransaction {
-            database.posts().clear()
-            database.posts().insert(posts)
-        }*/
+        if (networkStatus.value is Loading) {
+            return@withContext
+        }
+        networkStatus.postValue(Loading())
+        try {
+            submissionPaginator.restart()
+            val page = submissionPaginator.next()
+            val posts = page.map { Post(sid = it.id, submission = it) }
+            database.runInTransaction {
+                database.posts().clear()
+                database.posts().insert(posts)
+            }
+            networkStatus.postValue(Success(Unit))
+        } catch (e: Exception) {
+            networkStatus.postValue(Fail(e))
+        }
     }
+
+    suspend fun loadMore() = withContext(Dispatchers.IO) {
+        if (networkStatus.value is Loading) {
+            return@withContext
+        }
+        networkStatus.postValue(Loading())
+        try {
+            val page = submissionPaginator.next()
+            val posts = page.map { Post(sid = it.id, submission = it) }
+            database.runInTransaction {
+                database.posts().insert(posts)
+            }
+            networkStatus.postValue(Success(Unit))
+        } catch (e: IOException) {
+            networkStatus.postValue(Fail(e))
+        }
+    }
+
 
     suspend fun loadMore(post: Post? = null, boundaryCallback: PostBoundaryCallback) =
         withContext(Dispatchers.IO) {
-
             database.posts()
                 .getAll()
                 .toLiveData(pageSize = DB_PAGE_SIZE, boundaryCallback = boundaryCallback)
@@ -73,6 +109,6 @@ class PostRepository @Inject constructor(
     }
 
     companion object {
-        private const val DB_PAGE_SIZE = 30
+        private const val DB_PAGE_SIZE = 10
     }
 }
