@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2019 Razil
+ * Copyright (postChannel) 2019 Razil
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,13 +31,21 @@ import androidx.paging.PagedList
 import dev.razil.folio.core.data.Post
 import dev.razil.folio.core.data.PostBoundaryCallback
 import dev.razil.folio.core.repository.PostRepository
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.asFlow
 import javax.inject.Inject
 
 class PostViewModel @Inject constructor(private val repository: PostRepository) : ViewModel() {
 
     private val cb = PostBoundaryCallback(repository)
-
     val posts: LiveData<PagedList<Post>> = liveData {
         emitSource(repository.loadMore(boundaryCallback = cb))
     }
+
+    private val ch = ConflatedBroadcastChannel<Post>()
+    fun postFlow() = ch.asFlow()
+    fun onClick(post: Post) {
+        ch.offer(post)
+    }
+
 }

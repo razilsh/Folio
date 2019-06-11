@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2019 Razil
+ * Copyright (postChannel) 2019 Razil
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ package dev.razil.folio.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import dev.razil.folio.R
-
 import dev.razil.folio.databinding.MainActivityBinding
 import dev.razil.folio.ui.binding.bind
 

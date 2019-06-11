@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2019 Razil
+ * Copyright (postChannel) 2019 Razil
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -59,25 +60,35 @@ fun RecyclerView.onLoadMore(threshold: Int = 3) = flowViaChannel<Unit> { channel
 fun RecyclerView.LayoutManager.toLinearLayoutManager() = this as LinearLayoutManager
 
 fun ImageView.loadInTarget(url: String?) {
+    val target = object : CustomViewTarget<ImageView, Drawable>(this) {
+        override fun onLoadFailed(errorDrawable: Drawable?) {
+            visibility = View.GONE
+        }
+
+        override fun onResourceCleared(placeholder: Drawable?) {}
+
+        override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+            setImageDrawable(resource)
+        }
+
+    }
+
+    target.clearOnDetach()
     if (url.isNullOrBlank()) {
         visibility = View.GONE
         return
     }
     visibility = View.VISIBLE
-    Glide.with(this).load(url).into(
-        object : CustomViewTarget<ImageView, Drawable>(this) {
-            override fun onLoadFailed(errorDrawable: Drawable?) {
-                visibility = View.GONE
-            }
-
-            override fun onResourceCleared(placeholder: Drawable?) {}
-
-            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                setImageDrawable(resource)
-            }
-
-        }
-    )
+    Glide.with(this).load(url).into(target)
 }
 
 typealias PostRequest = LiveData<Result<List<Post>>>
+
+fun <T> LiveData<T>.asFlow() = flowViaChannel<T?> {
+    it.offer(value)
+    val observer = Observer<T> { t -> it.offer(t) }
+    observeForever(observer)
+    it.invokeOnClose {
+        removeObserver(observer)
+    }
+}

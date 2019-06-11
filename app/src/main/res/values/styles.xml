@@ -1,7 +1,7 @@
 <!--
   ~ MIT License
   ~
-  ~ Copyright (c) 2019 Razil
+  ~ Copyright (postChannel) 2019 Razil
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
@@ -49,4 +49,21 @@
     <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
     <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
   </style>
+
+  <!-- set the rounded drawable as background to your bottom sheet -->
+  <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+    <item name="android:background">@drawable/bottom_sheet</item>
+  </style>
+
+  <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
+    <item name="android:windowIsFloating">false</item>
+    <item name="bottomSheetStyle">@style/BottomSheet</item>
+  </style>
+
+  <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@color/colorPrimary</item>
+  </style>
+
+
 </resources>

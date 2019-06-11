@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2019 Razil
+ * Copyright (postChannel) 2019 Razil
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ import dagger.BindsInstance
 import dagger.Component
 import dev.razil.folio.Folio
 import dev.razil.folio.ui.MainActivity
+import dev.razil.folio.ui.comments.CommentFragment
 import dev.razil.folio.ui.posts.MainFragment
 import javax.inject.Singleton
 
@@ -36,6 +37,7 @@ import javax.inject.Singleton
 interface AppComponent {
     fun inject(activity: MainActivity)
     fun inject(mainFragment: MainFragment)
+    fun inject(commentFragment: CommentFragment)
 
     @Component.Factory
     interface Factory {

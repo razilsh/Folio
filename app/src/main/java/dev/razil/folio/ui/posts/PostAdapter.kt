@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2019 Razil
+ * Copyright (postChannel) 2019 Razil
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import dev.razil.folio.core.data.Post
 import dev.razil.folio.databinding.PostItemBinding
 import dev.razil.folio.util.loadInTarget
 
-class PostAdapter(private val onClick: (Post) -> Unit = {}) :
+class PostAdapter(val onClick: (Post) -> Unit) :
     PagedListAdapter<Post, PostAdapter.Holder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -58,7 +58,7 @@ class PostAdapter(private val onClick: (Post) -> Unit = {}) :
         init {
             binding.root.setOnClickListener {
                 val post = getItem(adapterPosition) ?: return@setOnClickListener
-                onClick(post)
+                onClick.invoke(post)
             }
         }
 
@@ -81,7 +81,7 @@ class PostAdapter(private val onClick: (Post) -> Unit = {}) :
             oldItem: Post,
             newItem: Post
         ): Boolean {
-            return oldItem.sid == newItem.sid
+            return oldItem.pid == newItem.pid
         }
 
         override fun areContentsTheSame(

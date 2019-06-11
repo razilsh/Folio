@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2019 Razil
+ * Copyright (postChannel) 2019 Razil
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,18 +28,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.razil.folio.Folio
 import dev.razil.folio.R
+import dev.razil.folio.core.data.Post
 import dev.razil.folio.core.di.DaggerViewModelFactory
 import dev.razil.folio.databinding.MainFragmentBinding
 import dev.razil.folio.itemanimators.SlideUpAlphaAnimator
 import dev.razil.folio.ui.binding.bind
+import dev.razil.folio.ui.comments.CommentFragment
 import dev.razil.folio.util.divider
+import me.saket.inboxrecyclerview.InboxRecyclerView
 import javax.inject.Inject
 
 class MainFragment : Fragment() {
@@ -50,7 +56,8 @@ class MainFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: DaggerViewModelFactory
     private val binding: MainFragmentBinding by bind(R.layout.main_fragment)
-    private val viewModel by viewModels<PostViewModel> { viewModelFactory }
+    private val viewModel by activityViewModels<PostViewModel> { viewModelFactory }
+    private val commentFragment = CommentFragment()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,18 +69,44 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val postAdapter = PostAdapter().apply { setHasStableIds(true) }
-        binding.submissionsView.apply {
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            itemAnimator = SlideUpAlphaAnimator()
-            addItemDecoration(divider(R.drawable.divider))
+
+        val onClick: (Post) -> Unit = {
+            viewModel.onClick(it)
+            binding.submissionsView.expandItem(it.pid.toLong())
+            childFragmentManager
+                .beginTransaction()
+                .replace(R.id.expandablePage, commentFragment)
+                .commitAllowingStateLoss()
         }
 
-        viewModel.posts.observe(viewLifecycleOwner, Observer { list ->
+        val postAdapter = PostAdapter(onClick)
+        binding.submissionsView.setupWith(postAdapter.also { it.setHasStableIds(true) })
+        viewModel.posts.observe(viewLifecycleOwner) { list ->
             postAdapter.submitList(list)
             binding.progressBar.hide()
-        })
+        }
 
-        binding.submissionsView.adapter = postAdapter
+        requireActivity().addBackPressCallback()
+    }
+
+    fun FragmentActivity.addBackPressCallback() {
+        onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (binding.expandablePage.isExpandedOrExpanding) {
+                binding.submissionsView.collapse()
+            } else {
+                if (!findNavController().navigateUp()) {
+                    findNavController().popBackStack()
+                }
+            }
+        }
+    }
+
+    fun InboxRecyclerView.setupWith(postAdapter: PostAdapter) {
+        layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        itemAnimator = SlideUpAlphaAnimator()
+        addItemDecoration(divider(R.drawable.divider))
+        setExpandablePage(binding.expandablePage)
+        adapter = postAdapter
+
     }
 }
