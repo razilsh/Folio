@@ -28,9 +28,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
@@ -46,9 +45,12 @@ import dev.razil.folio.itemanimators.SlideUpAlphaAnimator
 import dev.razil.folio.ui.binding.bind
 import dev.razil.folio.ui.comments.CommentFragment
 import dev.razil.folio.util.divider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.saket.inboxrecyclerview.InboxRecyclerView
+import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import javax.inject.Inject
 
 class MainFragment : Fragment() {
@@ -61,6 +63,22 @@ class MainFragment : Fragment() {
     private val binding: MainFragmentBinding by bind(R.layout.main_fragment)
     private val viewModel by activityViewModels<PostViewModel> { viewModelFactory }
     private val commentFragment = CommentFragment()
+    private val clickActor = lifecycleScope.actor<Post>(Dispatchers.Default) {
+        for (post in channel) {
+            viewModel.onClick(post)
+            delay(200)
+            onPostClicked(post)
+        }
+    }
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (binding.expandablePage.isExpandedOrExpanding) {
+                binding.submissionsView.collapse()
+            } else {
+                findNavController().popBackStack()
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,41 +91,39 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val postAdapter = PostAdapter(this::onPostClicked)
-
+        val postAdapter = PostAdapter {
+            clickActor.offer(it)
+        }
         binding.submissionsView.setupWith(postAdapter.also { it.setHasStableIds(true) })
         viewModel.posts.observe(viewLifecycleOwner) { list ->
             postAdapter.submitList(list)
             binding.progressBar.hide()
         }
-        requireActivity().addBackPressCallback()
-    }
-
-    private fun onPostClicked(post: Post) {
-        lifecycleScope.launch {
-            viewModel.onClick(post)
-            delay(100)
-            binding.submissionsView.expandItem(post.pid.toLong())
-            childFragmentManager
-                .beginTransaction()
-                .replace(R.id.expandablePage, commentFragment)
-                .commitAllowingStateLoss()
-        }
-    }
-
-    private fun FragmentActivity.addBackPressCallback() {
-        onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            if (binding.expandablePage.isExpandedOrExpanding) {
-                binding.submissionsView.collapse()
-            } else {
-                if (!findNavController().navigateUp()) {
-                    findNavController().popBackStack()
-                }
+        binding.expandablePage.pullToCollapseEnabled = false
+        binding.submissionsView.page.addStateChangeCallbacks(object : PageStateChangeCallbacks {
+            override fun onPageAboutToCollapse(collapseAnimDuration: Long) {}
+            override fun onPageAboutToExpand(expandAnimDuration: Long) {}
+            override fun onPageCollapsed() {
+                backPressedCallback.remove()
             }
-        }
+            override fun onPageExpanded() {
+                requireActivity().onBackPressedDispatcher.addCallback(
+                    this@MainFragment,
+                    backPressedCallback
+                )
+            }
+        })
     }
 
-    fun InboxRecyclerView.setupWith(postAdapter: PostAdapter) {
+    private suspend fun onPostClicked(post: Post) = withContext(Dispatchers.Main) {
+        binding.submissionsView.expandItem(post.pid.toLong())
+        childFragmentManager
+            .beginTransaction()
+            .replace(R.id.expandablePage, commentFragment, CommentFragment::class.java.simpleName)
+            .commitAllowingStateLoss()
+    }
+
+    private fun InboxRecyclerView.setupWith(postAdapter: PostAdapter) {
         layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         itemAnimator = SlideUpAlphaAnimator()
         addItemDecoration(divider(R.drawable.divider))

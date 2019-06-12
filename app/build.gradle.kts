@@ -84,12 +84,11 @@ dependencies {
     implementation("ru.noties.markwon:html:3.0.1")
 
     implementation(Libs.jraw_android)
-    implementation("com.commonsware.cwac:anddown:0.4.0")
-    implementation("org.sufficientlysecure:html-textview:3.6")
     implementation("com.airbnb.android:epoxy:3.4.2")
     implementation("com.airbnb.android:epoxy-paging:3.4.2")
     implementation("com.airbnb.android:epoxy-databinding:3.4.2")
     kapt("com.airbnb.android:epoxy-processor:3.4.2")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.9")
 
     implementation(Libs.retrofit)
     implementation(Libs.converter_moshi)

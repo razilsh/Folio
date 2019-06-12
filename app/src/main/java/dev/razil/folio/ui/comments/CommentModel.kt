@@ -26,53 +26,17 @@ package dev.razil.folio.ui.comments
 
 import android.view.View
 import android.widget.TextView
-import androidx.core.widget.ContentLoadingProgressBar
-import com.airbnb.epoxy.AsyncEpoxyController
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
-import com.commonsware.cwac.anddown.AndDown
 import dev.razil.folio.Folio
 import dev.razil.folio.R
 import dev.razil.folio.core.data.Comment
-import dev.razil.folio.ui.comments.CommentModel.CommentHolder
-import dev.razil.folio.ui.comments.ProgressModel.ProgressHolder
-import dev.razil.folio.ui.widgets.IndentedLayout
 import dev.razil.folio.util.KotlinEpoxyHolder
 import ru.noties.markwon.utils.NoCopySpannableFactory
 
-class CommentController : AsyncEpoxyController() {
-    private var comments = listOf<Comment>()
-
-    init {
-
-    }
-
-    fun submitList(comments: List<Comment>) {
-        this.comments = comments
-        // requestModelBuild()
-    }
-
-    override fun buildModels() {
-        if (this.comments.isEmpty()) {
-            progress { id("progress${comments.size}") }
-        }
-        comments.forEach { comment ->
-            comment {
-                id(comment.id)
-                comment(comment)
-                onBind { model, view, position ->
-                    (view.itemView as? IndentedLayout)
-                        ?.setIndentationDepth(model.comment.commentNode.depth - 1)
-                }
-            }
-        }
-    }
-}
-
 @EpoxyModelClass(layout = R.layout.comment_item)
-abstract class CommentModel : EpoxyModelWithHolder<CommentHolder>() {
-    val andDown = AndDown()
+abstract class CommentModel : EpoxyModelWithHolder<CommentModel.CommentHolder>() {
 
     @EpoxyAttribute
     lateinit var comment: Comment
@@ -81,24 +45,18 @@ abstract class CommentModel : EpoxyModelWithHolder<CommentHolder>() {
 
     override fun bind(holder: CommentHolder) {
         holder.author.text = comment.author
-        if (comment.body.isNullOrBlank()) {
-            return
-        } else {
-            val body = comment.body!!
-            holder.body.setSpannableFactory(NoCopySpannableFactory.getInstance())
-            Folio.markwon().setMarkdown(holder.body, body)
+        when {
+            comment.body.isNullOrBlank() -> return
+            else -> {
+                val body = comment.body!!
+                holder.body.setSpannableFactory(NoCopySpannableFactory.getInstance())
+                Folio.markwon().setMarkdown(holder.body, body)
+            }
         }
     }
 
     class CommentHolder : KotlinEpoxyHolder() {
         val author: TextView by bind(R.id.author)
         val body: TextView by bind(R.id.body)
-    }
-}
-
-@EpoxyModelClass(layout = R.layout.progress_item)
-abstract class ProgressModel : EpoxyModelWithHolder<ProgressHolder>() {
-    class ProgressHolder : KotlinEpoxyHolder() {
-        val progressBar by bind<ContentLoadingProgressBar>(R.id.progressBar)
     }
 }

@@ -26,6 +26,8 @@ package dev.razil.folio
 
 import android.app.Application
 import com.codemonkeylabs.fpslibrary.TinyDancer
+import com.github.piasy.biv.BigImageViewer
+import com.github.piasy.biv.loader.glide.GlideImageLoader
 import dev.razil.folio.core.di.DaggerAppComponent
 import dev.razil.folio.util.Ext
 import ru.noties.markwon.Markwon
@@ -54,6 +56,7 @@ class Folio : Application() {
             Timber.plant(Timber.DebugTree())
         }
         Ext.with(this)
+        BigImageViewer.initialize(GlideImageLoader.with(this))
         TinyDancer.create().show(this)
     }
 

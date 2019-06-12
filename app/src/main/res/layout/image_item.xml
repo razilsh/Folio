@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
-  ~ Copyright (postChannel) 2019 Razil
+  ~ Copyright (c) 2019 Razil
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,16 @@
   ~ SOFTWARE.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical">
 
-  <data>
-
-  </data>
-
-  <LinearLayout
+  <ImageView
+    android:id="@+id/post_image"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="24dp"
-    android:background="@color/color_vh"
-    android:gravity="center"
-    android:orientation="vertical">
-
-    <androidx.core.widget.ContentLoadingProgressBar
-      android:id="@+id/progressBar"
-      style="@style/Widget.AppCompat.ProgressBar"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content" />
-  </LinearLayout>
-</layout>
+    android:adjustViewBounds="true"
+    tools:srcCompat="@tools:sample/backgrounds/scenic" />
+</LinearLayout>

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (postChannel) 2019 Razil
+ * Copyright (c) 2019 Razil
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,28 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui
+package dev.razil.folio.ui.comments
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.ImageView
+import com.airbnb.epoxy.EpoxyAttribute
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
 import dev.razil.folio.R
-import dev.razil.folio.databinding.MainActivityBinding
-import dev.razil.folio.ui.binding.bind
+import dev.razil.folio.util.KotlinEpoxyHolder
+import dev.razil.folio.util.loadInTarget
 
-class MainActivity : AppCompatActivity() {
-    private val binding by bind<MainActivityBinding>(R.layout.main_activity)
+@EpoxyModelClass(layout = R.layout.image_item)
+abstract class ImageModel : EpoxyModelWithHolder<ImageModel.ImageHolder>() {
+    @EpoxyAttribute
+    lateinit var url: String
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+
+    override fun bind(holder: ImageHolder) {
+        super.bind(holder)
+        holder.postImage.loadInTarget(url)
+    }
+
+    class ImageHolder : KotlinEpoxyHolder() {
+        val postImage: ImageView by bind(R.id.post_image)
     }
 }

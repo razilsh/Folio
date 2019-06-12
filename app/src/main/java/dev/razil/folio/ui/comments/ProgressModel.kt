@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (postChannel) 2019 Razil
+ * Copyright (c) 2019 Razil
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,18 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui
+package dev.razil.folio.ui.comments
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.ContentLoadingProgressBar
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
 import dev.razil.folio.R
-import dev.razil.folio.databinding.MainActivityBinding
-import dev.razil.folio.ui.binding.bind
+import dev.razil.folio.util.KotlinEpoxyHolder
 
-class MainActivity : AppCompatActivity() {
-    private val binding by bind<MainActivityBinding>(R.layout.main_activity)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+@EpoxyModelClass(layout = R.layout.progress_item)
+abstract class ProgressModel : EpoxyModelWithHolder<ProgressModel.ProgressHolder>() {
+    @Suppress("unused")
+    class ProgressHolder : KotlinEpoxyHolder() {
+        val progressBar by bind<ContentLoadingProgressBar>(R.id.progressBar)
     }
 }

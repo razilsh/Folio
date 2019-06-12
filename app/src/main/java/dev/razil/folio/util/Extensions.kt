@@ -33,9 +33,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.transition.Transition
+import dev.razil.folio.GlideApp
 import dev.razil.folio.core.Result
 import dev.razil.folio.core.data.Post
 import kotlinx.coroutines.Dispatchers
@@ -73,13 +73,12 @@ fun ImageView.loadInTarget(url: String?) {
 
     }
 
-    target.clearOnDetach()
     if (url.isNullOrBlank()) {
         visibility = View.GONE
         return
     }
     visibility = View.VISIBLE
-    Glide.with(this).load(url).into(target)
+    GlideApp.with(this).load(url).thumbnail(0.1f).into(target)
 }
 
 typealias PostRequest = LiveData<Result<List<Post>>>

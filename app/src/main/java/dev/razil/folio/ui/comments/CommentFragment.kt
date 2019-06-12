@@ -30,37 +30,30 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import dev.razil.folio.Folio
 import dev.razil.folio.R
 import dev.razil.folio.core.data.Post
 import dev.razil.folio.core.di.DaggerViewModelFactory
-import dev.razil.folio.core.event.EventObserver
 import dev.razil.folio.databinding.CommentFragmentBinding
-import dev.razil.folio.itemanimators.SlideUpAlphaAnimator
+import dev.razil.folio.itemanimators.wia.SlideInUpAnimator
 import dev.razil.folio.ui.binding.bind
-import dev.razil.folio.ui.posts.PostTextCreator
 import dev.razil.folio.ui.posts.PostViewModel
-import dev.razil.folio.util.hide
-import dev.razil.folio.util.loadInTarget
-import dev.razil.folio.util.show
 import me.saket.inboxrecyclerview.page.ExpandablePageLayout
 import me.saket.inboxrecyclerview.page.InterceptResult
 import javax.inject.Inject
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class CommentFragment : Fragment() {
 
     init {
         Folio.injector().inject(this)
     }
 
-    private val commentController = CommentController()
-
     @Inject
     lateinit var viewModelFactory: DaggerViewModelFactory
-    private val viewModel by activityViewModels<PostViewModel> { viewModelFactory }
-    val binding by bind<CommentFragmentBinding>(R.layout.comment_fragment)
-    private val textCreator = PostTextCreator()
+    private val viewModel: PostViewModel by activityViewModels { viewModelFactory }
+    private val commentController = EpoxyCommentController()
+    val binding: CommentFragmentBinding by bind(R.layout.comment_fragment)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,12 +65,13 @@ class CommentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.recyclerView.setController(commentController)
+        binding.recyclerView.itemAnimator = SlideInUpAnimator()
 
-        viewModel.comments.observe(viewLifecycleOwner, EventObserver {
-            updatePostUi(it.first)
-            commentController.submitList(it.second)
-            binding.recyclerView.setControllerAndBuildModels(commentController)
+        viewModel.postAndComments.observe(viewLifecycleOwner, Observer {
+            commentController.setData(it.first, it.second)
         })
+
         val expandablePage = (view.parent as? ExpandablePageLayout)
         expandablePage?.pullToCollapseInterceptor = { downX, downY, upwardPull ->
             val directionInt = if (upwardPull) +1 else -1
@@ -87,19 +81,5 @@ class CommentFragment : Fragment() {
     }
 
     private fun updatePostUi(post: Post) {
-        binding.executePendingBindings()
-        textCreator.title(binding.titleView, post)
-        textCreator.topText(binding.subredditView, post)
-        textCreator.author(binding.authorView, post)
-        textCreator.comment(binding.commentsView, post)
-        textCreator.score(binding.scoreView, post)
-        binding.post = post
-        if (post.submission.postHint == "image") {
-            binding.imageView.show()
-            binding.imageView.loadInTarget(post.submission.url)
-        } else {
-            binding.imageView.hide()
-        }
-        binding.recyclerView.itemAnimator = SlideUpAlphaAnimator()
     }
 }
