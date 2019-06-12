@@ -22,35 +22,16 @@
  * SOFTWARE.
  */
 
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath(Libs.com_android_tools_build_gradle)
-        classpath(Libs.kotlin_gradle_plugin)
-    }
-}
+package dev.razil.folio.core.data
 
-plugins {
-    id("de.fayard.buildSrcVersions") version "0.3.2"
-}
+import net.dean.jraw.models.Comment
+import net.dean.jraw.models.PublicContribution
+import net.dean.jraw.references.CommentReference
+import net.dean.jraw.tree.CommentNode
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven("http://dl.bintray.com/piasy/maven")
-        maven("https://s3.amazonaws.com/repo.commonsware.com")
-        maven("https://jitpack.io")
-        maven("https://oss.sonatype.org/content/repositories/snapshots")
-    }
-}
-
-tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
-}
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
+data class Comment(
+    val cid: Int = 0,
+    val sid: String,
+    val commentNode: CommentNode<Comment>
+) : PublicContribution<CommentReference> by commentNode.subject,
+    Iterable<CommentNode<Comment>> by commentNode.replies

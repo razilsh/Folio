@@ -32,6 +32,7 @@ import dev.razil.folio.core.Loading
 import dev.razil.folio.core.Result
 import dev.razil.folio.core.Success
 import dev.razil.folio.core.Uninitialized
+import dev.razil.folio.core.data.Comment
 import dev.razil.folio.core.data.FolioDatabase
 import dev.razil.folio.core.data.Post
 import dev.razil.folio.core.data.PostBoundaryCallback
@@ -39,8 +40,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.dean.jraw.RedditClient
 import net.dean.jraw.oauth.AccountHelper
+import net.dean.jraw.tree.CommentNode
 import java.io.IOException
 import javax.inject.Inject
+import net.dean.jraw.models.Comment as JrawModelsComment
 
 class PostRepository @Inject constructor(
     private val accountHelper: AccountHelper,
@@ -106,6 +109,14 @@ class PostRepository @Inject constructor(
     private fun getClient(userLess: Boolean = true): RedditClient = when (userLess) {
         true -> accountHelper.switchToUserless()
         else -> accountHelper.switchToUser(accountHelper.reddit.requireAuthenticatedUser())
+    }
+
+    suspend fun getComments(submissionId: String) = withContext(Dispatchers.IO) {
+        val root = redditClient.submission(submissionId).comments()
+        root.walkTree().drop(1).toList().mapIndexed { index, commentNode ->
+            val node = commentNode as CommentNode<JrawModelsComment>
+            Comment(index, submissionId, node)
+        }
     }
 
     companion object {

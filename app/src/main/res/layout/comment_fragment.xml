@@ -162,7 +162,8 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.airbnb.epoxy.EpoxyRecyclerView
+      android:id="@+id/recyclerView"
       android:layout_width="0dp"
       android:layout_height="0dp"
       android:background="@color/color_vh"

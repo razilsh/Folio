@@ -30,5 +30,13 @@
   <fragment
     android:id="@+id/mainFragment"
     android:name="dev.razil.folio.ui.posts.MainFragment"
-    android:label="MainFragment" />
+    android:label="MainFragment" >
+    <action
+      android:id="@+id/action_mainFragment_to_commentFragment"
+      app:destination="@id/commentFragment" />
+  </fragment>
+  <fragment
+    android:id="@+id/commentFragment"
+    android:name="dev.razil.folio.ui.comments.CommentFragment"
+    android:label="CommentFragment" />
 </navigation>

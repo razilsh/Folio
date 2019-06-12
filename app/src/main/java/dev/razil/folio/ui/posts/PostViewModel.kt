@@ -25,16 +25,20 @@
 package dev.razil.folio.ui.posts
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import dev.razil.folio.core.data.Comment
 import dev.razil.folio.core.data.Post
 import dev.razil.folio.core.data.PostBoundaryCallback
+import dev.razil.folio.core.event.Event
 import dev.razil.folio.core.repository.PostRepository
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class PostViewModel @Inject constructor(private val repository: PostRepository) : ViewModel() {
 
     private val cb = PostBoundaryCallback(repository)
@@ -42,10 +46,16 @@ class PostViewModel @Inject constructor(private val repository: PostRepository) 
         emitSource(repository.loadMore(boundaryCallback = cb))
     }
 
-    private val ch = ConflatedBroadcastChannel<Post>()
-    fun postFlow() = ch.asFlow()
-    fun onClick(post: Post) {
-        ch.offer(post)
-    }
+    val comments = MutableLiveData<Event<Pair<Post, List<Comment>>>>()
 
+    fun onClick(post: Post) {
+        val p = comments.value?.peek()?.first
+        if (p != null && p == post) {
+            return
+        }
+        comments.postValue(Event(Pair(post, emptyList())))
+        viewModelScope.launch {
+            comments.postValue(Event(Pair(post, repository.getComments(post.sid))))
+        }
+    }
 }

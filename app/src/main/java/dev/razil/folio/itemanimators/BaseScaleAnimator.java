@@ -59,7 +59,7 @@ public abstract class BaseScaleAnimator<T> extends BaseItemAnimator<T> {
     abstract public float changeAnimationPrepare1(RecyclerView.ViewHolder holder);
 
     /**
-     * animates the view to the previous default value
+     * animates the itemView to the previous default value
      *
      * @param holder
      * @param prevValue the previous value

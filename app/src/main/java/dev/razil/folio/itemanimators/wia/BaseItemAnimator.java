@@ -30,7 +30,6 @@ import android.view.animation.Interpolator;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorCompat;
 import androidx.core.view.ViewPropertyAnimatorListener;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import java.util.ArrayList;
@@ -345,7 +344,7 @@ public abstract class BaseItemAnimator extends SimpleItemAnimator {
   @Override
   public boolean animateChange(ViewHolder oldHolder, ViewHolder newHolder, int fromX, int fromY, int toX, int toY) {
     if (oldHolder == newHolder) {
-      // Don't know how to run change animations when the same view holder is re-used.
+      // Don't know how to run change animations when the same itemView holder is re-used.
       // run a move animation to handle position changes.
       return animateMove(oldHolder, fromX, fromY, toX, toY);
     }

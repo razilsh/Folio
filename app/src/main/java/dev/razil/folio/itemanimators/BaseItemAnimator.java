@@ -25,6 +25,8 @@ package dev.razil.folio.itemanimators;
 
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.view.View;
+import android.view.animation.Interpolator;
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorCompat;
@@ -32,9 +34,6 @@ import androidx.core.view.ViewPropertyAnimatorListener;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-import android.view.View;
-import android.view.animation.Interpolator;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -308,14 +307,14 @@ public abstract class BaseItemAnimator<T> extends SimpleItemAnimator {
     }
 
     /**
-     * the animation to prepare the view before the add animation is run
+     * the animation to prepare the itemView before the add animation is run
      *
      * @param holder
      */
     abstract public void addAnimationPrepare(ViewHolder holder);
 
     /**
-     * the animation for adding a view
+     * the animation for adding a itemView
      *
      * @param holder
      * @return
@@ -323,7 +322,7 @@ public abstract class BaseItemAnimator<T> extends SimpleItemAnimator {
     abstract public ViewPropertyAnimatorCompat addAnimation(ViewHolder holder);
 
     /**
-     * the cleanup method if the animation needs to be stopped. and tro prepare for the next view
+     * the cleanup method if the animation needs to be stopped. and tro prepare for the next itemView
      *
      * @param holder
      */
@@ -397,7 +396,7 @@ public abstract class BaseItemAnimator<T> extends SimpleItemAnimator {
     public boolean animateChange(ViewHolder oldHolder, ViewHolder newHolder,
                                  int fromX, int fromY, int toX, int toY) {
         if (oldHolder == newHolder) {
-            // Don't know how to run change animations when the same view holder is re-used.
+            // Don't know how to run change animations when the same itemView holder is re-used.
             // run a move animation to handle position changes.
             return animateMove(oldHolder, fromX, fromY, toX, toY);
         }
@@ -488,7 +487,7 @@ public abstract class BaseItemAnimator<T> extends SimpleItemAnimator {
     }
 
     /**
-     * the animation for removing the old view
+     * the animation for removing the old itemView
      *
      * @param holder
      * @return
@@ -496,7 +495,7 @@ public abstract class BaseItemAnimator<T> extends SimpleItemAnimator {
     abstract public ViewPropertyAnimatorCompat changeOldAnimation(ViewHolder holder, ChangeInfo changeInfo);
 
     /**
-     * the animation for changing the new view
+     * the animation for changing the new itemView
      *
      * @param holder
      * @return
@@ -504,7 +503,7 @@ public abstract class BaseItemAnimator<T> extends SimpleItemAnimator {
     abstract public ViewPropertyAnimatorCompat changeNewAnimation(ViewHolder holder);
 
     /**
-     * the cleanup method if the animation needs to be stopped. and tro prepare for the next view
+     * the cleanup method if the animation needs to be stopped. and tro prepare for the next itemView
      *
      * @param holder
      */

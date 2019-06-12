@@ -28,10 +28,24 @@ import android.app.Application
 import com.codemonkeylabs.fpslibrary.TinyDancer
 import dev.razil.folio.core.di.DaggerAppComponent
 import dev.razil.folio.util.Ext
+import ru.noties.markwon.Markwon
+import ru.noties.markwon.ext.strikethrough.StrikethroughPlugin
+import ru.noties.markwon.ext.tables.TablePlugin
+import ru.noties.markwon.html.HtmlPlugin
+
 import timber.log.Timber
 
 class Folio : Application() {
     private val appComponent by lazy { DaggerAppComponent.factory().create(this) }
+    val markwon by lazy {
+        Markwon.builder(this).usePlugins(
+            listOf(
+                StrikethroughPlugin.create(),
+                HtmlPlugin.create(),
+                TablePlugin.create(this)
+            )
+        ).build()
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -47,5 +61,6 @@ class Folio : Application() {
     companion object {
         private lateinit var folio: Folio
         fun injector() = folio.appComponent
+        fun markwon() = folio.markwon
     }
 }

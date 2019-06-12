@@ -32,6 +32,7 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,6 +46,8 @@ import dev.razil.folio.itemanimators.SlideUpAlphaAnimator
 import dev.razil.folio.ui.binding.bind
 import dev.razil.folio.ui.comments.CommentFragment
 import dev.razil.folio.util.divider
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.saket.inboxrecyclerview.InboxRecyclerView
 import javax.inject.Inject
 
@@ -70,26 +73,29 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val onClick: (Post) -> Unit = {
-            viewModel.onClick(it)
-            binding.submissionsView.expandItem(it.pid.toLong())
-            childFragmentManager
-                .beginTransaction()
-                .replace(R.id.expandablePage, commentFragment)
-                .commitAllowingStateLoss()
-        }
+        val postAdapter = PostAdapter(this::onPostClicked)
 
-        val postAdapter = PostAdapter(onClick)
         binding.submissionsView.setupWith(postAdapter.also { it.setHasStableIds(true) })
         viewModel.posts.observe(viewLifecycleOwner) { list ->
             postAdapter.submitList(list)
             binding.progressBar.hide()
         }
-
         requireActivity().addBackPressCallback()
     }
 
-    fun FragmentActivity.addBackPressCallback() {
+    private fun onPostClicked(post: Post) {
+        lifecycleScope.launch {
+            viewModel.onClick(post)
+            delay(100)
+            binding.submissionsView.expandItem(post.pid.toLong())
+            childFragmentManager
+                .beginTransaction()
+                .replace(R.id.expandablePage, commentFragment)
+                .commitAllowingStateLoss()
+        }
+    }
+
+    private fun FragmentActivity.addBackPressCallback() {
         onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if (binding.expandablePage.isExpandedOrExpanding) {
                 binding.submissionsView.collapse()
