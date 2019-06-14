@@ -22,28 +22,15 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui.comments
+package dev.razil.folio.ui.posts
 
-import android.widget.ImageView
-import com.airbnb.epoxy.EpoxyAttribute
-import com.airbnb.epoxy.EpoxyModelClass
-import com.airbnb.epoxy.EpoxyModelWithHolder
-import dev.razil.folio.R
-import dev.razil.folio.util.KotlinEpoxyHolder
-import dev.razil.folio.util.loadInTarget
-
-@EpoxyModelClass(layout = R.layout.image_item)
-abstract class ImageModel : EpoxyModelWithHolder<ImageModel.ImageHolder>() {
-    @EpoxyAttribute
-    lateinit var url: String
-
-
-    override fun bind(holder: ImageHolder) {
-        super.bind(holder)
-        holder.postImage.loadInTarget(url)
-    }
-
-    class ImageHolder : KotlinEpoxyHolder() {
-        val postImage: ImageView by bind(R.id.post_image)
-    }
-}
+data class Post(
+    val id: String,
+    val author: String,
+    val title: String,
+    val score: String,
+    val subreddit: String,
+    val thumbnail: String? = null,
+    val totalComments: String,
+    val url: String
+)

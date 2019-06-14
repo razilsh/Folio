@@ -24,17 +24,7 @@
 
 package dev.razil.folio.ui
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import dev.razil.folio.R
-import dev.razil.folio.databinding.MainActivityBinding
-import dev.razil.folio.ui.binding.bind
 
-class MainActivity : AppCompatActivity() {
-    private val binding by bind<MainActivityBinding>(R.layout.main_activity)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-    }
-}
+class MainActivity : AppCompatActivity(R.layout.main_activity)

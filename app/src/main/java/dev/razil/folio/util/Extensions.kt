@@ -26,21 +26,16 @@
 
 package dev.razil.folio.util
 
-import android.graphics.drawable.Drawable
-import android.view.View
-import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.request.target.CustomViewTarget
-import com.bumptech.glide.request.transition.Transition
-import dev.razil.folio.GlideApp
-import dev.razil.folio.core.Result
-import dev.razil.folio.core.data.Post
+import com.ibm.icu.text.CompactDecimalFormat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.flowViaChannel
+import java.util.*
 
 fun RecyclerView.onLoadMore(threshold: Int = 3) = flowViaChannel<Unit> { channel ->
     val linearLayoutManager = layoutManager!!.toLinearLayoutManager()
@@ -55,33 +50,20 @@ fun RecyclerView.onLoadMore(threshold: Int = 3) = flowViaChannel<Unit> { channel
     }
     addOnScrollListener(scrollListener)
     channel.invokeOnClose { removeOnScrollListener(scrollListener) }
-}.flowOn(Dispatchers.Default)
+}.flowOn(Dispatchers.Default).debounce(500)
 
 fun RecyclerView.LayoutManager.toLinearLayoutManager() = this as LinearLayoutManager
 
-fun ImageView.loadInTarget(url: String?) {
-    val target = object : CustomViewTarget<ImageView, Drawable>(this) {
-        override fun onLoadFailed(errorDrawable: Drawable?) {
-            visibility = View.GONE
-        }
-
-        override fun onResourceCleared(placeholder: Drawable?) {}
-
-        override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-            setImageDrawable(resource)
-        }
-
-    }
-
-    if (url.isNullOrBlank()) {
-        visibility = View.GONE
-        return
-    }
-    visibility = View.VISIBLE
-    GlideApp.with(this).load(url).thumbnail(0.1f).into(target)
-}
-
-typealias PostRequest = LiveData<Result<List<Post>>>
+/**
+ * Helper to handle pagination. Use this when you want to append a list of results at a given offset.
+ * This is safer than just appending blindly to a list because it guarantees that the data gets added
+ * at the offset it was requested at.
+ *
+ * This will replace *all contents* starting at the offset with the new list.
+ * For example: [1,2,3].appendAt([4], 1) == [1,4]]
+ */
+fun <T : Any> List<T>.appendAt(other: List<T>?, offset: Int) =
+    subList(0, offset.coerceIn(0, size)) + (other ?: emptyList())
 
 fun <T> LiveData<T>.asFlow() = flowViaChannel<T?> {
     it.offer(value)
@@ -90,4 +72,15 @@ fun <T> LiveData<T>.asFlow() = flowViaChannel<T?> {
     it.invokeOnClose {
         removeObserver(observer)
     }
+}
+
+fun Number.formatCompact() = compactFormat(this.toString())
+
+fun compactFormat(text: String): String? {
+    if (text.isBlank()) return null
+    val formatter = CompactDecimalFormat.getInstance(
+        Locale.getDefault(),
+        CompactDecimalFormat.CompactStyle.SHORT
+    )
+    return text.toInt().let(formatter::format)
 }

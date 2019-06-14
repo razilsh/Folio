@@ -24,102 +24,47 @@
 
 package dev.razil.folio.core.repository
 
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.paging.toLiveData
-import dev.razil.folio.core.Fail
-import dev.razil.folio.core.Loading
-import dev.razil.folio.core.Result
-import dev.razil.folio.core.Success
-import dev.razil.folio.core.Uninitialized
-import dev.razil.folio.core.data.Comment
-import dev.razil.folio.core.data.FolioDatabase
-import dev.razil.folio.core.data.Post
-import dev.razil.folio.core.data.PostBoundaryCallback
+import dev.razil.folio.ui.posts.Post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.dean.jraw.RedditClient
+import net.dean.jraw.models.Submission
 import net.dean.jraw.oauth.AccountHelper
-import net.dean.jraw.tree.CommentNode
-import java.io.IOException
+import net.dean.jraw.pagination.DefaultPaginator
 import javax.inject.Inject
 import net.dean.jraw.models.Comment as JrawModelsComment
 
-class PostRepository @Inject constructor(
-    private val accountHelper: AccountHelper,
-    private val database: FolioDatabase
-) {
+class PostRepository @Inject constructor(private val accountHelper: AccountHelper) {
     private val redditClient: RedditClient by lazy { getClient() }
-    private val submissionPaginator by lazy { redditClient.frontPage().limit(10).build() }
-
-    val networkStatus = MutableLiveData<Result<Unit>>(Uninitialized)
-    val mediator = MediatorLiveData<Result<Unit>>()
-
-    suspend fun listing() = withContext(Dispatchers.IO) {
-        val page = submissionPaginator.next()
-        page.mapIndexed { index, submission ->
-            Post(index, submission.id, submission)
-        }
+    private val paginator: DefaultPaginator<Submission> by lazy {
+        redditClient.frontPage()
+            .limit(NETWORK_PAGE_SIZE)
+            .build()
     }
-
-    suspend fun refresh() = withContext(Dispatchers.IO) {
-        if (networkStatus.value is Loading) {
-            return@withContext
-        }
-        networkStatus.postValue(Loading())
-        try {
-            submissionPaginator.restart()
-            val page = submissionPaginator.next()
-            val posts = page.map { Post(sid = it.id, submission = it) }
-            database.runInTransaction {
-                database.posts().clear()
-                database.posts().insert(posts)
-            }
-            networkStatus.postValue(Success(Unit))
-        } catch (e: Exception) {
-            networkStatus.postValue(Fail(e))
-        }
-    }
-
-    suspend fun loadMore() = withContext(Dispatchers.IO) {
-        if (networkStatus.value is Loading) {
-            return@withContext
-        }
-        networkStatus.postValue(Loading())
-        try {
-            val page = submissionPaginator.next()
-            val posts = page.map { Post(sid = it.id, submission = it) }
-            database.runInTransaction {
-                database.posts().insert(posts)
-            }
-            networkStatus.postValue(Success(Unit))
-        } catch (e: IOException) {
-            networkStatus.postValue(Fail(e))
-        }
-    }
-
-
-    suspend fun loadMore(post: Post? = null, boundaryCallback: PostBoundaryCallback) =
-        withContext(Dispatchers.IO) {
-            database.posts()
-                .getAll()
-                .toLiveData(pageSize = DB_PAGE_SIZE, boundaryCallback = boundaryCallback)
-        }
 
     private fun getClient(userLess: Boolean = true): RedditClient = when (userLess) {
         true -> accountHelper.switchToUserless()
         else -> accountHelper.switchToUser(accountHelper.reddit.requireAuthenticatedUser())
     }
 
-    suspend fun getComments(submissionId: String) = withContext(Dispatchers.IO) {
-        val root = redditClient.submission(submissionId).comments()
-        root.walkTree().drop(1).toList().mapIndexed { index, commentNode ->
-            val node = commentNode as CommentNode<JrawModelsComment>
-            Comment(index, submissionId, node)
-        }
+    suspend fun posts() = withContext(Dispatchers.IO) {
+        paginator.next()
+            .map {
+                Post(
+                    id = it.id,
+                    author = it.author,
+                    title = it.title,
+                    score = it.score.toString(),
+                    subreddit = it.subreddit,
+                    thumbnail = it.thumbnail,
+                    totalComments = it.commentCount.toString(),
+                    url = it.url
+                )
+            }
     }
 
     companion object {
         private const val DB_PAGE_SIZE = 10
+        private const val NETWORK_PAGE_SIZE = 10
     }
 }

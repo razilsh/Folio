@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
-  ~ Copyright (postChannel) 2019 Razil
+  ~ Copyright (c) 2019 Razil
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,17 @@
   ~ SOFTWARE.
   -->
 
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/nav_graph"
-  app:startDestination="@id/listFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:background="@color/color_vh"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:orientation="vertical">
 
+  <com.airbnb.epoxy.EpoxyRecyclerView
+    android:id="@+id/rv_posts"
+    tools:listitem="@layout/post_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
 
-  <fragment
-    android:id="@+id/listFragment"
-    android:name="dev.razil.folio.ui.posts.ListFragment"
-    android:label="ListFragment" />
-</navigation>
+</LinearLayout>

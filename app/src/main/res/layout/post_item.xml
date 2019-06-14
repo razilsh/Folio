@@ -29,25 +29,10 @@
   <data>
 
     <variable
-      name="topText"
-      type="CharSequence" />
+      name="post"
+      type="dev.razil.folio.ui.posts.Post" />
 
-    <variable
-      name="title"
-      type="String" />
-
-    <variable
-      name="author"
-      type="CharSequence" />
-
-
-    <variable
-      name="score"
-      type="String" />
-
-    <variable
-      name="comments"
-      type="String" />
+    <import type="dev.razil.folio.util.ExtensionsKt" />
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout
@@ -63,50 +48,50 @@
     tools:targetApi="m">
 
     <TextView
-      android:id="@+id/titleView"
+      android:id="@+id/title"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
       android:layout_marginEnd="16dp"
       android:fontFamily="@font/interuimedium"
-      android:text="@{title}"
+      android:text="@{post.title}"
       android:textColor="#bbb"
       android:textSize="14sp"
-      app:layout_constraintEnd_toStartOf="@+id/thumbnailView"
+      app:layout_constraintEnd_toStartOf="@+id/thumbnail"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/subredditView"
+      app:layout_constraintTop_toBottomOf="@+id/subreddit"
       tools:maxLines="5"
       tools:text="@tools:sample/lorem/random" />
 
     <TextView
-      android:id="@+id/subredditView"
+      android:id="@+id/subreddit"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:fontFamily="@font/interuiregular"
       android:gravity="bottom"
-      android:text="@{topText}"
+      android:text="@{post.subreddit}"
       android:textColor="@color/blue_grey"
       android:textSize="12sp"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       tools:text="r/programming" />
 
-    <com.makeramen.roundedimageview.RoundedImageView
-      android:id="@+id/thumbnailView"
+    <ImageView
+      android:id="@+id/thumbnail"
       android:layout_width="70dp"
       android:layout_height="70dp"
+      android:elevation="10dp"
       android:scaleType="centerCrop"
       android:visibility="visible"
-      app:layout_constraintBottom_toBottomOf="@+id/titleView"
+      app:imageUrl="@{post.thumbnail}"
+      app:layout_constraintBottom_toBottomOf="@+id/title"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toTopOf="@+id/titleView"
-      app:riv_corner_radius="3dp"
-      app:riv_mutate_background="true"
+      app:layout_constraintTop_toTopOf="@+id/title"
       tools:ignore="ContentDescription"
       tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-      android:id="@+id/authorView"
+      android:id="@+id/author"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
@@ -115,17 +100,17 @@
       android:drawablePadding="8dp"
       android:fontFamily="@font/interuiregular"
       android:gravity="top"
-      android:text="@{author}"
+      android:text="@{post.author}"
       android:textColor="@color/colorTextSecondary"
       android:textSize="12sp"
-      app:layout_constraintEnd_toStartOf="@+id/commentsView"
+      app:layout_constraintEnd_toStartOf="@+id/total_comments"
       app:layout_constraintHorizontal_bias="0.5"
-      app:layout_constraintStart_toEndOf="@+id/scoreView"
-      app:layout_constraintTop_toBottomOf="@+id/titleView"
+      app:layout_constraintStart_toEndOf="@+id/score"
+      app:layout_constraintTop_toBottomOf="@+id/title"
       tools:text="razilsh" />
 
     <TextView
-      android:id="@+id/commentsView"
+      android:id="@+id/total_comments"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
@@ -134,17 +119,17 @@
       android:drawablePadding="8dp"
       android:fontFamily="@font/interuiregular"
       android:gravity="top"
-      android:text="@{comments}"
+      android:text="@{ExtensionsKt.compactFormat(post.totalComments)}"
       android:textColor="@color/colorTextSecondary"
       android:textSize="12sp"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.5"
-      app:layout_constraintStart_toEndOf="@+id/authorView"
-      app:layout_constraintTop_toBottomOf="@+id/titleView"
+      app:layout_constraintStart_toEndOf="@+id/author"
+      app:layout_constraintTop_toBottomOf="@+id/title"
       tools:text="2K" />
 
     <TextView
-      android:id="@+id/scoreView"
+      android:id="@+id/score"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
@@ -152,13 +137,13 @@
       android:drawablePadding="8dp"
       android:fontFamily="@font/interuiregular"
       android:gravity="top"
-      android:text="@{score}"
+      android:text="@{ExtensionsKt.compactFormat(post.score)}"
       android:textColor="@color/colorTextSecondary"
       android:textSize="12sp"
-      app:layout_constraintEnd_toStartOf="@+id/authorView"
+      app:layout_constraintEnd_toStartOf="@+id/author"
       app:layout_constraintHorizontal_bias="0.5"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/titleView"
+      app:layout_constraintTop_toBottomOf="@+id/title"
       tools:text="125K" />
   </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (postChannel) 2019 Razil
+ * Copyright (c) 2019 Razil
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,5 +22,17 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.core.data
+package dev.razil.folio.ui.posts
 
+import com.airbnb.epoxy.Typed2EpoxyController
+import dev.razil.folio.PostItemBindingModel_
+import dev.razil.folio.ProgressItemBindingModel_
+
+class PostController : Typed2EpoxyController<List<Post>, Boolean>() {
+    override fun buildModels(posts: List<Post>, isLoading: Boolean) {
+        posts.forEach { post ->
+            PostItemBindingModel_().id(post.id).post(post).addTo(this)
+        }
+        ProgressItemBindingModel_().id("loading${posts.size}").addIf(isLoading, this)
+    }
+}

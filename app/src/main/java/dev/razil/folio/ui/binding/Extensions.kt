@@ -24,10 +24,20 @@
 
 package dev.razil.folio.ui.binding
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.target.CustomViewTarget
+import com.bumptech.glide.request.transition.Transition
+import dev.razil.folio.GlideApp
 import dev.razil.folio.core.Incomplete
 import dev.razil.folio.core.Result
+import dev.razil.folio.util.hide
+import dev.razil.folio.util.show
 
 @BindingAdapter("visibleIf")
 fun View.visibleIf(predicate: Boolean = true) {
@@ -47,4 +57,35 @@ fun <T> View.visibleIf(request: Result<T>?) {
         is Incomplete -> View.VISIBLE
         else -> View.GONE
     }
+}
+
+@BindingAdapter("imageUrl")
+fun ImageView.imageUrl(url: String?) {
+    if (url.isNullOrBlank()) {
+        return
+    }
+    GlideApp.with(this)
+        .asBitmap()
+        .load(url)
+        .thumbnail(0.1f)
+        .transition(BitmapTransitionOptions.withCrossFade())
+        .centerCrop()
+        .transform(RoundedCorners(15))
+        .into(
+            object : CustomViewTarget<ImageView, Bitmap>(this) {
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    hide()
+                }
+
+                override fun onResourceCleared(placeholder: Drawable?) {
+
+                }
+
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    show()
+                    setImageBitmap(resource)
+                }
+
+            }
+        )
 }

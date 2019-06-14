@@ -28,17 +28,15 @@ import dagger.BindsInstance
 import dagger.Component
 import dev.razil.folio.Folio
 import dev.razil.folio.ui.MainActivity
-import dev.razil.folio.ui.comments.CommentFragment
-import dev.razil.folio.ui.posts.MainFragment
+import dev.razil.folio.ui.posts.ListFragment
 import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AppModule::class])
 interface AppComponent {
     fun inject(activity: MainActivity)
-    fun inject(mainFragment: MainFragment)
-    fun inject(commentFragment: CommentFragment)
-
+    fun inject(listFragment: ListFragment)
+    
     @Component.Factory
     interface Factory {
         fun create(@BindsInstance appContext: Folio): AppComponent

@@ -26,37 +26,31 @@ package dev.razil.folio.ui.posts
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagedList
-import dev.razil.folio.core.data.Comment
-import dev.razil.folio.core.data.Post
-import dev.razil.folio.core.data.PostBoundaryCallback
 import dev.razil.folio.core.repository.PostRepository
+import dev.razil.folio.util.appendAt
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PostViewModel @Inject constructor(private val repository: PostRepository) : ViewModel() {
-
-    private val cb = PostBoundaryCallback(repository)
-    val posts: LiveData<PagedList<Post>> = liveData {
-        emitSource(repository.loadMore(boundaryCallback = cb))
+    init {
+        loadMore()
     }
 
-    val comments = MutableLiveData<Pair<Post, List<Comment>>>()
-    val postAndComments = Transformations.distinctUntilChanged(comments)
-    fun onClick(post: Post) {
-        val p = comments.value?.first
-        when (p != null && p == post) {
-            true -> return
-            false -> loadComments(post)
-        }
+    private val _posts = MutableLiveData<Pair<List<Post>, Boolean>>(Pair(emptyList(), true))
+    val posts: LiveData<Pair<List<Post>, Boolean>>
+        get() = _posts
+
+    fun loadMore() {
+        load()
     }
 
-    private fun loadComments(post: Post) = viewModelScope.launch {
-        comments.postValue(Pair(post, emptyList()))
-        comments.postValue(Pair(post, repository.getComments(post.sid)))
+    private fun load() = viewModelScope.launch {
+        val c = _posts.value?.first ?: emptyList()
+        _posts.postValue(_posts.value?.copy(c, true))
+        val new = repository.posts()
+        val d = _posts.value?.copy(first = c.appendAt(new, c.size), second = false)
+        _posts.postValue(d)
     }
 }
