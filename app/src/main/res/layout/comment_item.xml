@@ -32,6 +32,10 @@
       name="clickListener"
       type="android.view.View.OnClickListener" />
 
+    <variable
+      name="comment"
+      type="dev.razil.folio.ui.comments.Comment" />
+
   </data>
 
   <dev.razil.folio.ui.widgets.IndentedLayout
@@ -46,9 +50,6 @@
       android:id="@+id/comment_container"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="?selectableItemBackground"
-      android:clickable="true"
-      android:focusable="true"
       android:onClick="@{clickListener}"
       android:orientation="vertical">
 
@@ -61,11 +62,12 @@
         android:paddingStart="16dp"
         android:paddingTop="16dp"
         android:paddingEnd="16dp"
-        android:textColor="#888"
+        android:text="@{comment.author}"
+        android:textColor="@color/blue_grey"
         android:textSize="12sp"
         tools:text="@tools:sample/lorem/random" />
 
-      <androidx.appcompat.widget.AppCompatTextView
+      <dev.razil.folio.ui.comments.MarkdownTextView
         android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,6 +75,8 @@
         android:paddingTop="4dp"
         android:paddingEnd="16dp"
         android:paddingBottom="16dp"
+        android:text="@{comment.body}"
+        android:textColor="@color/grey_300"
         tools:text="@tools:sample/lorem/random" />
     </LinearLayout>
 

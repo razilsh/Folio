@@ -22,30 +22,12 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui.posts
+package dev.razil.folio.ui.comments
 
-import com.airbnb.epoxy.Typed2EpoxyController
-import dev.razil.folio.PostItemBindingModel_
-import dev.razil.folio.ProgressItemBindingModel_
-import dev.razil.folio.util.ImageLoader
-import dev.razil.folio.util.OnPostClickListener
+import net.dean.jraw.tree.CommentNode
+import net.dean.jraw.models.Comment as JrawModelsComment
 
-class PostController(
-    private val clickListener: OnPostClickListener? = null,
-    imageLoader: ImageLoader
-) :
-    Typed2EpoxyController<List<Post>, Boolean>() {
-
-    override fun buildModels(posts: List<Post>, isLoading: Boolean) {
-        posts.forEach { post ->
-            PostItemBindingModel_()
-                .id(post.id)
-                .post(post)
-                .clickListener { model, parentView, clickedView, position ->
-                    this.clickListener?.onClick(model, parentView, clickedView, position)
-                }
-                .addTo(this)
-        }
-        ProgressItemBindingModel_().id("loading${posts.size}").addIf(isLoading, this)
-    }
+abstract class BaseComment(commentNode: CommentNode<JrawModelsComment>) :
+    CommentNode<JrawModelsComment> by commentNode {
+    var isCollapsed: Boolean = false
 }

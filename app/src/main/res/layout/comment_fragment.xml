@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
-  ~ Copyright (postChannel) 2019 Razil
+  ~ Copyright (c) 2019 Razil
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,34 @@
   ~ SOFTWARE.
   -->
 
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/nav_graph"
-  app:startDestination="@id/listFragment">
-  <fragment
-    android:id="@+id/listFragment"
-    android:name="dev.razil.folio.ui.posts.ListFragment"
-    android:label="ListFragment">
-    <action
-      android:id="@+id/action_show_comments"
-      app:destination="@id/commentFragment"
-      app:enterAnim="@anim/nav_default_enter_anim"
-      app:exitAnim="@anim/nav_default_exit_anim"
-      app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-      app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-  </fragment>
-  <fragment
-    android:id="@+id/commentFragment"
-    android:name="dev.razil.folio.ui.comments.CommentFragment"
-    android:label="CommentFragment">
-    <argument
-      android:name="postId"
-      app:argType="string" />
-  </fragment>
-</navigation>
+  android:id="@+id/coordinator"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/app_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+      android:id="@+id/collapsing_toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:fitsSystemWindows="true"
+      app:contentScrim="@color/scrim_color"
+      app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <com.airbnb.epoxy.EpoxyRecyclerView
+    android:id="@+id/rv_comments"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

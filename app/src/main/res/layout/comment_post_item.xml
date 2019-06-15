@@ -1,7 +1,7 @@
 <!--
   ~ MIT License
   ~
-  ~ Copyright (postChannel) 2019 Razil
+  ~ Copyright (c) 2019 Razil
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy
   ~ of this software and associated documentation files (the "Software"), to deal
@@ -43,12 +43,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/color_vh"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?selectableItemBackground"
     android:onClick="@{clickListener}"
     android:padding="16dp"
-    android:transitionName="@string/transition_name"
     tools:ignore="UnusedAttribute"
     tools:layout_height="match_parent"
     tools:targetApi="m">
@@ -58,12 +54,11 @@
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginTop="16dp"
-      android:layout_marginEnd="16dp"
       android:fontFamily="@font/interuimedium"
       android:text="@{post.title}"
       android:textColor="#bbb"
       android:textSize="14sp"
-      app:layout_constraintEnd_toStartOf="@+id/thumbnail"
+      app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/subreddit"
       tools:maxLines="5"
@@ -78,26 +73,10 @@
       android:text="@{post.subreddit}"
       android:textColor="@color/blue_grey"
       android:textSize="12sp"
+      app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       tools:text="r/programming" />
-
-    <ImageView
-      android:id="@+id/thumbnail"
-      android:layout_width="70dp"
-      android:layout_height="70dp"
-      android:elevation="10dp"
-      android:scaleType="centerCrop"
-      android:transitionName="@string/transition_name"
-      android:visibility="gone"
-      app:imageUrl="@{post.thumbnail}"
-      app:layout_constraintBottom_toBottomOf="@+id/title"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toTopOf="@+id/title"
-      app:loadImage="@{post.thumbnail}"
-      tools:ignore="ContentDescription"
-      tools:srcCompat="@tools:sample/avatars"
-      tools:visibility="visible" />
 
     <TextView
       android:id="@+id/author"
@@ -154,5 +133,37 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/title"
       tools:text="125K" />
+
+    <dev.razil.folio.ui.comments.MarkdownTextView
+      android:id="@+id/self_text"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:background="@drawable/bg_self_text"
+      android:text="@{post.selfText}"
+      android:textColor="#bbb"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/divider"
+      app:visibleIf="@{post.selfText != null &amp;&amp; post.selfText.length() != 0}"
+      tools:text="@tools:sample/lorem/random" />
+
+    <androidx.constraintlayout.widget.Barrier
+      android:id="@+id/barrier"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:barrierDirection="bottom"
+      app:constraint_referenced_ids="score,total_comments,author"
+      tools:layout_editor_absoluteX="16dp"
+      tools:layout_editor_absoluteY="715dp" />
+
+    <View
+      android:id="@+id/divider"
+      android:layout_width="match_parent"
+      android:layout_height="0.5dp"
+      android:layout_marginTop="16dp"
+      android:background="?android:attr/listDivider"
+      app:layout_constraintTop_toTopOf="@+id/barrier"
+      tools:layout_editor_absoluteX="-3dp" />
   </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

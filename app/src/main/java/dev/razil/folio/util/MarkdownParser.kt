@@ -22,30 +22,22 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui.posts
+package dev.razil.folio.util
 
-import com.airbnb.epoxy.Typed2EpoxyController
-import dev.razil.folio.PostItemBindingModel_
-import dev.razil.folio.ProgressItemBindingModel_
-import dev.razil.folio.util.ImageLoader
-import dev.razil.folio.util.OnPostClickListener
+import android.text.Spanned
+import dev.razil.folio.Folio
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
-class PostController(
-    private val clickListener: OnPostClickListener? = null,
-    imageLoader: ImageLoader
-) :
-    Typed2EpoxyController<List<Post>, Boolean>() {
+object MarkdownParser {
+    private val executor = Executors.newCachedThreadPool()
+    private val markwon = Folio.markwon()
 
-    override fun buildModels(posts: List<Post>, isLoading: Boolean) {
-        posts.forEach { post ->
-            PostItemBindingModel_()
-                .id(post.id)
-                .post(post)
-                .clickListener { model, parentView, clickedView, position ->
-                    this.clickListener?.onClick(model, parentView, clickedView, position)
-                }
-                .addTo(this)
-        }
-        ProgressItemBindingModel_().id("loading${posts.size}").addIf(isLoading, this)
+    fun parse(text: String): Spanned {
+        return executor.submit(parseIO(text)).get()
+    }
+
+    private fun parseIO(text: String) = Callable {
+        markwon.render(markwon.parse(text))
     }
 }

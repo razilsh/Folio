@@ -1,4 +1,9 @@
-@EpoxyDataBindingLayouts({R.layout.post_item, R.layout.progress_item})
+@EpoxyDataBindingLayouts({
+    R.layout.post_item,
+    R.layout.progress_item,
+    R.layout.comment_post_item,
+    R.layout.comment_item
+})
 package dev.razil.folio.util;
 
 import com.airbnb.epoxy.EpoxyDataBindingLayouts;

@@ -22,30 +22,33 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui.posts
+package dev.razil.folio.ui.comments
 
-import com.airbnb.epoxy.Typed2EpoxyController
-import dev.razil.folio.PostItemBindingModel_
-import dev.razil.folio.ProgressItemBindingModel_
-import dev.razil.folio.util.ImageLoader
-import dev.razil.folio.util.OnPostClickListener
+import com.airbnb.epoxy.TypedEpoxyController
+import dev.razil.folio.commentItem
+import dev.razil.folio.commentPostItem
+import dev.razil.folio.progressItem
+import dev.razil.folio.ui.posts.Post
+import dev.razil.folio.ui.widgets.IndentedLayout
 
-class PostController(
-    private val clickListener: OnPostClickListener? = null,
-    imageLoader: ImageLoader
-) :
-    Typed2EpoxyController<List<Post>, Boolean>() {
-
-    override fun buildModels(posts: List<Post>, isLoading: Boolean) {
-        posts.forEach { post ->
-            PostItemBindingModel_()
-                .id(post.id)
-                .post(post)
-                .clickListener { model, parentView, clickedView, position ->
-                    this.clickListener?.onClick(model, parentView, clickedView, position)
-                }
-                .addTo(this)
+class CommentController : TypedEpoxyController<Triple<Post, List<Comment>, Boolean>>() {
+    override fun buildModels(data: Triple<Post, List<Comment>, Boolean>) {
+        val (post, comments, isLoading) = data
+        commentPostItem {
+            id(post.id)
+            post(post)
         }
-        ProgressItemBindingModel_().id("loading${posts.size}").addIf(isLoading, this)
+        if (isLoading) {
+            progressItem { id("loading${comments.size}") }
+        }
+        comments.forEach { comment ->
+            commentItem {
+                id(comment.id)
+                comment(comment)
+                onBind { model, view, position ->
+                    (view.dataBinding.root as? IndentedLayout)?.setIndentationDepth(comment.depth - 1)
+                }
+            }
+        }
     }
 }

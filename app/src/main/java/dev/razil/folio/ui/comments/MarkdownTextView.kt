@@ -22,30 +22,36 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui.posts
+package dev.razil.folio.ui.comments
 
-import com.airbnb.epoxy.Typed2EpoxyController
-import dev.razil.folio.PostItemBindingModel_
-import dev.razil.folio.ProgressItemBindingModel_
-import dev.razil.folio.util.ImageLoader
-import dev.razil.folio.util.OnPostClickListener
+import android.content.Context
+import android.text.method.LinkMovementMethod
+import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatTextView
+import dev.razil.folio.util.MarkdownParser
+import ru.noties.markwon.utils.NoCopySpannableFactory
 
-class PostController(
-    private val clickListener: OnPostClickListener? = null,
-    imageLoader: ImageLoader
-) :
-    Typed2EpoxyController<List<Post>, Boolean>() {
+class MarkdownTextView : AppCompatTextView {
 
-    override fun buildModels(posts: List<Post>, isLoading: Boolean) {
-        posts.forEach { post ->
-            PostItemBindingModel_()
-                .id(post.id)
-                .post(post)
-                .clickListener { model, parentView, clickedView, position ->
-                    this.clickListener?.onClick(model, parentView, clickedView, position)
-                }
-                .addTo(this)
-        }
-        ProgressItemBindingModel_().id("loading${posts.size}").addIf(isLoading, this)
+    init {
+        this.setSpannableFactory(NoCopySpannableFactory.getInstance())
+        movementMethod = LinkMovementMethod.getInstance()
+    }
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
+
+    override fun setText(text: CharSequence?, type: BufferType?) {
+        text ?: return
+        val t = text.toString()
+        val parsed = MarkdownParser.parse(t)
+        super.setText(parsed, BufferType.SPANNABLE)
     }
 }

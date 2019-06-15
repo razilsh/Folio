@@ -21,31 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package dev.razil.folio.util
 
-package dev.razil.folio.ui.posts
+import java.util.*
 
-import com.airbnb.epoxy.Typed2EpoxyController
-import dev.razil.folio.PostItemBindingModel_
-import dev.razil.folio.ProgressItemBindingModel_
-import dev.razil.folio.util.ImageLoader
-import dev.razil.folio.util.OnPostClickListener
+/**
+ * Enum of known image formats.
+ */
+enum class ImageFormats : ImageFormat {
+    UNKNOWN,
+    BMP,
+    DCX,
+    GIF,
+    ICNS,
+    ICO,
+    JBIG2,
+    JPEG,
+    PAM,
+    PSD,
+    PBM,
+    PGM,
+    PNM,
+    PPM,
+    PCX,
+    PNG,
+    RGBE,
+    TGA,
+    TIFF,
+    WBMP,
+    XBM,
+    JPG,
+    XPM;
 
-class PostController(
-    private val clickListener: OnPostClickListener? = null,
-    imageLoader: ImageLoader
-) :
-    Typed2EpoxyController<List<Post>, Boolean>() {
+    override fun getName(): String {
+        return name
+    }
 
-    override fun buildModels(posts: List<Post>, isLoading: Boolean) {
-        posts.forEach { post ->
-            PostItemBindingModel_()
-                .id(post.id)
-                .post(post)
-                .clickListener { model, parentView, clickedView, position ->
-                    this.clickListener?.onClick(model, parentView, clickedView, position)
-                }
-                .addTo(this)
-        }
-        ProgressItemBindingModel_().id("loading${posts.size}").addIf(isLoading, this)
+    override fun getExtension(): String {
+        return name
+    }
+}
+
+fun String.hasImageFileExtension(): Boolean {
+    return ImageFormats.values().any {
+        this@hasImageFileExtension.substringAfterLast(".") == it.name.toLowerCase(Locale.ENGLISH)
     }
 }

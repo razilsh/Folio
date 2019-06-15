@@ -28,6 +28,7 @@ import dagger.BindsInstance
 import dagger.Component
 import dev.razil.folio.Folio
 import dev.razil.folio.ui.MainActivity
+import dev.razil.folio.ui.comments.CommentFragment
 import dev.razil.folio.ui.posts.ListFragment
 import javax.inject.Singleton
 
@@ -35,8 +36,10 @@ import javax.inject.Singleton
 @Component(modules = [AppModule::class])
 interface AppComponent {
     fun inject(activity: MainActivity)
+    @Suppress("EXPERIMENTAL_API_USAGE")
     fun inject(listFragment: ListFragment)
-    
+    fun inject(commentFragment: CommentFragment)
+
     @Component.Factory
     interface Factory {
         fun create(@BindsInstance appContext: Folio): AppComponent

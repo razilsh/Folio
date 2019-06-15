@@ -28,9 +28,11 @@ data class Post(
     val id: String,
     val author: String,
     val title: String,
+    val selfText: String? = null,
     val score: String,
     val subreddit: String,
     val thumbnail: String? = null,
     val totalComments: String,
-    val url: String
+    val url: String,
+    val type: PostType
 )

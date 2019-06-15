@@ -1,3 +1,5 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
+
 /*
  * MIT License
  *
@@ -28,7 +30,9 @@ plugins {
     kotlin("android.extensions")
     kotlin("kapt")
 }
-
+apply {
+    plugin("androidx.navigation.safeargs.kotlin")
+}
 android {
     compileSdkVersion(28)
     defaultConfig {

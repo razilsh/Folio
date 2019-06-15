@@ -24,20 +24,21 @@
 
 package dev.razil.folio.ui.binding
 
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.transition.Transition
 import dev.razil.folio.GlideApp
 import dev.razil.folio.core.Incomplete
 import dev.razil.folio.core.Result
+import dev.razil.folio.ui.posts.Post
+import dev.razil.folio.util.hasImageFileExtension
 import dev.razil.folio.util.hide
 import dev.razil.folio.util.show
+import timber.log.Timber
 
 @BindingAdapter("visibleIf")
 fun View.visibleIf(predicate: Boolean = true) {
@@ -61,31 +62,46 @@ fun <T> View.visibleIf(request: Result<T>?) {
 
 @BindingAdapter("imageUrl")
 fun ImageView.imageUrl(url: String?) {
+    val target = object : CustomViewTarget<ImageView, Drawable>(this) {
+        override fun onLoadFailed(errorDrawable: Drawable?) {
+
+
+        }
+
+        override fun onResourceCleared(placeholder: Drawable?) {
+
+        }
+
+        override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+            setImageDrawable(resource)
+        }
+
+    }
+    GlideApp.with(this).clear(target)
     if (url.isNullOrBlank()) {
         return
     }
     GlideApp.with(this)
-        .asBitmap()
         .load(url)
         .thumbnail(0.1f)
-        .transition(BitmapTransitionOptions.withCrossFade())
-        .centerCrop()
-        .transform(RoundedCorners(15))
-        .into(
-            object : CustomViewTarget<ImageView, Bitmap>(this) {
-                override fun onLoadFailed(errorDrawable: Drawable?) {
-                    hide()
-                }
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .into(target)
+}
 
-                override fun onResourceCleared(placeholder: Drawable?) {
-
-                }
-
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    show()
-                    setImageBitmap(resource)
-                }
-
-            }
-        )
+@BindingAdapter("loadPostImage")
+fun ImageView.loadPostImage(post: Post) {
+    val url = post.url
+    Timber.i("url = ${post.url}")
+    Timber.i("hasImageFileExtension = ${url.hasImageFileExtension()}")
+    if (url.hasImageFileExtension()) {
+        show()
+        GlideApp.with(this)
+            .load(url)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(this)
+    } else {
+        GlideApp.with(this).clear(this)
+        hide()
+        return
+    }
 }

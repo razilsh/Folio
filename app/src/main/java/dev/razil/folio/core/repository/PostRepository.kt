@@ -24,13 +24,16 @@
 
 package dev.razil.folio.core.repository
 
+import dev.razil.folio.ui.comments.Comment
 import dev.razil.folio.ui.posts.Post
+import dev.razil.folio.ui.posts.type
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.dean.jraw.RedditClient
 import net.dean.jraw.models.Submission
 import net.dean.jraw.oauth.AccountHelper
 import net.dean.jraw.pagination.DefaultPaginator
+import net.dean.jraw.tree.CommentNode
 import javax.inject.Inject
 import net.dean.jraw.models.Comment as JrawModelsComment
 
@@ -54,14 +57,25 @@ class PostRepository @Inject constructor(private val accountHelper: AccountHelpe
                     id = it.id,
                     author = it.author,
                     title = it.title,
+                    selfText = it.selfText,
                     score = it.score.toString(),
                     subreddit = it.subreddit,
                     thumbnail = it.thumbnail,
                     totalComments = it.commentCount.toString(),
-                    url = it.url
+                    url = it.url,
+                    type = it.type()
                 )
             }
     }
+
+    suspend fun comments(id: String): List<Comment> = withContext(Dispatchers.IO) {
+        // Remove the root node
+        val nodes = redditClient.submission(id).comments().walkTree().drop(1)
+        nodes.map { node ->
+            @Suppress("UNCHECKED_CAST")
+            (Comment(node as CommentNode<JrawModelsComment>))
+        }
+    }.toList()
 
     companion object {
         private const val DB_PAGE_SIZE = 10

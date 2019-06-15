@@ -21,31 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package dev.razil.folio.util;
 
-package dev.razil.folio.ui.posts
+/**
+ * Simple image format interface.
+ */
+public interface ImageFormat {
 
-import com.airbnb.epoxy.Typed2EpoxyController
-import dev.razil.folio.PostItemBindingModel_
-import dev.razil.folio.ProgressItemBindingModel_
-import dev.razil.folio.util.ImageLoader
-import dev.razil.folio.util.OnPostClickListener
+    /**
+     * Get the name of this {@link ImageFormat}.
+     *
+     * @return String name
+     */
+    String getName();
 
-class PostController(
-    private val clickListener: OnPostClickListener? = null,
-    imageLoader: ImageLoader
-) :
-    Typed2EpoxyController<List<Post>, Boolean>() {
+    /**
+     * Get the file extension associated with this {@link ImageFormat}.
+     *
+     * @return String extension
+     */
+    String getExtension();
 
-    override fun buildModels(posts: List<Post>, isLoading: Boolean) {
-        posts.forEach { post ->
-            PostItemBindingModel_()
-                .id(post.id)
-                .post(post)
-                .clickListener { model, parentView, clickedView, position ->
-                    this.clickListener?.onClick(model, parentView, clickedView, position)
-                }
-                .addTo(this)
-        }
-        ProgressItemBindingModel_().id("loading${posts.size}").addIf(isLoading, this)
-    }
 }

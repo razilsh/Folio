@@ -22,30 +22,27 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui.posts
+package dev.razil.folio.ui.comments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
-import androidx.navigation.fragment.findNavController
-import com.airbnb.epoxy.OnModelClickListener
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import dev.razil.folio.Folio
 import dev.razil.folio.R
 import dev.razil.folio.core.di.DaggerViewModelFactory
-import dev.razil.folio.itemanimators.SlideUpAlphaAnimator
-import dev.razil.folio.util.ImageLoader
-import dev.razil.folio.util.divider
-import dev.razil.folio.util.onLoadMore
-import kotlinx.android.synthetic.main.list_fragment.*
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
+import dev.razil.folio.ui.binding.loadPostImage
+import dev.razil.folio.ui.posts.PostViewModel
+import kotlinx.android.synthetic.main.comment_fragment.*
 import javax.inject.Inject
 
-@FlowPreview
-class ListFragment : Fragment(R.layout.list_fragment) {
+class CommentFragment : Fragment() {
     init {
         Folio.injector().inject(this)
     }
@@ -53,37 +50,31 @@ class ListFragment : Fragment(R.layout.list_fragment) {
     @Inject
     lateinit var viewModelFactory: DaggerViewModelFactory
     private val viewModel by activityViewModels<PostViewModel> { viewModelFactory }
+    private val controller = CommentController()
+    private lateinit var mediaImage: ImageView
+
+    @SuppressLint("InflateParams")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val content = inflater.inflate(R.layout.comment_fragment, container, false) as ViewGroup
+        val ctl = content.findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar)
+
+        // TODO show video layout when post type is video.
+        mediaImage = inflater.inflate(R.layout.media_image, ctl, false) as ImageView
+        ctl.addView(mediaImage)
+        return content
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val controller = PostController(
-            OnModelClickListener { model, parentView, clickedView, position ->
-                val id = model.post().id
-                viewModel.loadComments(id)
-                showComments(id)
-            },
-            ImageLoader(requireActivity())
-        )
-
-        viewModel.posts.observe(viewLifecycleOwner) { (posts, isLoading) ->
-            controller.setData(posts, isLoading)
+        rv_comments.setController(controller)
+        viewModel.comments.observe(viewLifecycleOwner) {
+            // Will only load image if post.type == PostType.IMAGE
+            mediaImage.loadPostImage(it.first)
+            controller.setData(it)
         }
-
-        rv_posts.setController(controller)
-        rv_posts.addItemDecoration(divider(R.drawable.divider))
-        rv_posts.itemAnimator = SlideUpAlphaAnimator()
-        lifecycleScope.launchWhenCreated {
-            rv_posts.onLoadMore(1).collect {
-                viewModel.loadMore()
-            }
-        }
-
-    }
-
-    private fun showComments(id: String) {
-        val navController = findNavController()
-        val action = ListFragmentDirections.actionShowComments(id)
-        navController.navigate(action)
     }
 }

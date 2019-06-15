@@ -30,12 +30,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.epoxy.DataBindingEpoxyModel
+import com.airbnb.epoxy.OnModelClickListener
 import com.ibm.icu.text.CompactDecimalFormat
+import dev.razil.folio.PostItemBindingModel_
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.flowViaChannel
 import java.util.*
+import net.dean.jraw.models.Comment as JrawModelsComment
 
 fun RecyclerView.onLoadMore(threshold: Int = 3) = flowViaChannel<Unit> { channel ->
     val linearLayoutManager = layoutManager!!.toLinearLayoutManager()
@@ -84,3 +88,5 @@ fun compactFormat(text: String): String? {
     )
     return text.toInt().let(formatter::format)
 }
+
+typealias OnPostClickListener = OnModelClickListener<PostItemBindingModel_, DataBindingEpoxyModel.DataBindingHolder>

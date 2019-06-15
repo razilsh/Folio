@@ -29,6 +29,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.razil.folio.core.repository.PostRepository
+import dev.razil.folio.ui.comments.Comment
 import dev.razil.folio.util.appendAt
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,6 +43,10 @@ class PostViewModel @Inject constructor(private val repository: PostRepository) 
     val posts: LiveData<Pair<List<Post>, Boolean>>
         get() = _posts
 
+    private val _comments = MutableLiveData<Triple<Post, List<Comment>, Boolean>>()
+    val comments: LiveData<Triple<Post, List<Comment>, Boolean>>
+        get() = _comments
+
     fun loadMore() {
         load()
     }
@@ -52,5 +57,16 @@ class PostViewModel @Inject constructor(private val repository: PostRepository) 
         val new = repository.posts()
         val d = _posts.value?.copy(first = c.appendAt(new, c.size), second = false)
         _posts.postValue(d)
+    }
+
+    fun loadComments(postId: String) = viewModelScope.launch {
+        val triple = Triple(getSelectedPost(postId)!!, emptyList<Comment>(), true)
+        _comments.postValue(triple)
+        val next = repository.comments(postId)
+        _comments.postValue(triple.copy(second = next, third = false))
+    }
+
+    fun getSelectedPost(id: String): Post? {
+        return posts.value?.first?.find { it.id == id }
     }
 }
