@@ -25,7 +25,7 @@
 package dev.razil.folio.ui.posts
 
 import com.airbnb.epoxy.Typed2EpoxyController
-import dev.razil.folio.PostItemBindingModel_
+import dev.razil.folio.PostItemTBindingModel_
 import dev.razil.folio.ProgressItemBindingModel_
 import dev.razil.folio.util.ImageLoader
 import dev.razil.folio.util.OnPostClickListener
@@ -38,11 +38,11 @@ class PostController(
 
     override fun buildModels(posts: List<Post>, isLoading: Boolean) {
         posts.forEach { post ->
-            PostItemBindingModel_()
+            PostItemTBindingModel_()
                 .id(post.id)
                 .post(post)
                 .clickListener { model, parentView, clickedView, position ->
-                    this.clickListener?.onClick(model, parentView, clickedView, position)
+                    clickListener?.onClick(model, parentView, clickedView, position)
                 }
                 .addTo(this)
         }

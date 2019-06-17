@@ -24,5 +24,6 @@
   -->
 
 <resources>
-  <integer name="anim_duration_short">300</integer>
+  <integer name="anim_duration_short">350</integer>
+  <integer name="slide">400</integer>
 </resources>

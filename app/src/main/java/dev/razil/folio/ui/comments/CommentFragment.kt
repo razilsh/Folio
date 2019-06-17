@@ -24,25 +24,21 @@
 
 package dev.razil.folio.ui.comments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import dev.razil.folio.Folio
 import dev.razil.folio.R
 import dev.razil.folio.core.di.DaggerViewModelFactory
-import dev.razil.folio.ui.binding.loadPostImage
 import dev.razil.folio.ui.posts.PostViewModel
 import kotlinx.android.synthetic.main.comment_fragment.*
+import timber.log.Timber
 import javax.inject.Inject
 
-class CommentFragment : Fragment() {
+class CommentFragment : Fragment(R.layout.comment_fragment) {
     init {
         Folio.injector().inject(this)
     }
@@ -51,29 +47,13 @@ class CommentFragment : Fragment() {
     lateinit var viewModelFactory: DaggerViewModelFactory
     private val viewModel by activityViewModels<PostViewModel> { viewModelFactory }
     private val controller = CommentController()
-    private lateinit var mediaImage: ImageView
-
-    @SuppressLint("InflateParams")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val content = inflater.inflate(R.layout.comment_fragment, container, false) as ViewGroup
-        val ctl = content.findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar)
-
-        // TODO show video layout when post type is video.
-        mediaImage = inflater.inflate(R.layout.media_image, ctl, false) as ImageView
-        ctl.addView(mediaImage)
-        return content
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_comments.setController(controller)
         viewModel.comments.observe(viewLifecycleOwner) {
             // Will only load image if post.type == PostType.IMAGE
-            mediaImage.loadPostImage(it.first)
+           // mediaImage.loadPostImage(it.first)
             controller.setData(it)
         }
     }

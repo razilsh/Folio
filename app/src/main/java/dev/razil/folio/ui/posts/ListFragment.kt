@@ -41,6 +41,8 @@ import dev.razil.folio.util.divider
 import dev.razil.folio.util.onLoadMore
 import kotlinx.android.synthetic.main.list_fragment.*
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
@@ -54,14 +56,20 @@ class ListFragment : Fragment(R.layout.list_fragment) {
     lateinit var viewModelFactory: DaggerViewModelFactory
     private val viewModel by activityViewModels<PostViewModel> { viewModelFactory }
 
+    private val clicks = lifecycleScope.actor<String> {
+        for (id in channel) {
+            viewModel.loadComments(id)
+            delay(200)
+            showComments(id)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val controller = PostController(
             OnModelClickListener { model, parentView, clickedView, position ->
                 val id = model.post().id
-                viewModel.loadComments(id)
-                showComments(id)
+                clicks.offer(id)
             },
             ImageLoader(requireActivity())
         )

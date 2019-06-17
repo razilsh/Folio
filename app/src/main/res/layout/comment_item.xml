@@ -76,7 +76,7 @@
         android:paddingEnd="16dp"
         android:paddingBottom="16dp"
         android:text="@{comment.body}"
-        android:textColor="@color/grey_300"
+        android:textColor="#bbb"
         tools:text="@tools:sample/lorem/random" />
     </LinearLayout>
 

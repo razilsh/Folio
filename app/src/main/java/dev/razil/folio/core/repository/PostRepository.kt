@@ -79,6 +79,6 @@ class PostRepository @Inject constructor(private val accountHelper: AccountHelpe
 
     companion object {
         private const val DB_PAGE_SIZE = 10
-        private const val NETWORK_PAGE_SIZE = 10
+        private const val NETWORK_PAGE_SIZE = 50
     }
 }

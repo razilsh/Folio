@@ -1,5 +1,5 @@
 /*
- * MIT License
+ * MIT Licens()e
  *
  * Copyright (c) 2019 Razil
  *
@@ -33,7 +33,9 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import dev.razil.folio.GlideApp
 
 class ImageLoader(context: Context) {
@@ -75,7 +77,22 @@ class ImageLoader(context: Context) {
                         return false
                     }
                 })
-                .into(iv)
+                .into(object : CustomViewTarget<ImageView, Drawable>(this@loadImage) {
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+
+                    }
+
+                    override fun onResourceCleared(placeholder: Drawable?) {
+
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        transition: Transition<in Drawable>?
+                    ) {
+                        setImageDrawable(resource)
+                    }
+                })
         }
     }
 }

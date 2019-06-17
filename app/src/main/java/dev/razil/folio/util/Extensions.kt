@@ -34,6 +34,7 @@ import com.airbnb.epoxy.DataBindingEpoxyModel
 import com.airbnb.epoxy.OnModelClickListener
 import com.ibm.icu.text.CompactDecimalFormat
 import dev.razil.folio.PostItemBindingModel_
+import dev.razil.folio.PostItemTBindingModel_
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
@@ -89,4 +90,4 @@ fun compactFormat(text: String): String? {
     return text.toInt().let(formatter::format)
 }
 
-typealias OnPostClickListener = OnModelClickListener<PostItemBindingModel_, DataBindingEpoxyModel.DataBindingHolder>
+typealias OnPostClickListener = OnModelClickListener<PostItemTBindingModel_, DataBindingEpoxyModel.DataBindingHolder>
