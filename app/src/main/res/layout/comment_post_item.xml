@@ -30,7 +30,7 @@
 
     <variable
       name="post"
-      type="dev.razil.folio.ui.posts.Post" />
+      type="dev.razil.folio.core.data.Post" />
 
     <import type="dev.razil.folio.util.ExtensionsKt" />
 

@@ -30,6 +30,8 @@ import dagger.Module
 import dagger.Provides
 import dev.razil.folio.BuildConfig
 import dev.razil.folio.Folio
+import dev.razil.folio.core.data.FolioDatabase
+import dev.razil.folio.core.data.PostDao
 import dev.razil.folio.core.repository.PostRepository
 import net.dean.jraw.android.AndroidHelper
 import net.dean.jraw.android.ManifestAppInfoProvider
@@ -95,12 +97,30 @@ object AppModule {
         return AndroidHelper.accountHelper(appInfoProvider, deviceUuid, tokenStore)
     }
 
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    fun provideDb(appContext: Folio): FolioDatabase {
+        return Room.databaseBuilder(appContext, FolioDatabase::class.java, "folio-db")
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    fun provideDao(database: FolioDatabase): PostDao {
+        return database.postsDao()
+    }
+
     @Provides
     @JvmStatic
     @Singleton
     fun provideSubRepository(
-        accountHelper: AccountHelper
+        accountHelper: AccountHelper,
+        db: FolioDatabase
     ): PostRepository {
-        return PostRepository(accountHelper)
+        return PostRepository(accountHelper, db)
     }
 }

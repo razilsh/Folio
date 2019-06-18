@@ -27,13 +27,10 @@ package dev.razil.folio.ui.posts
 import com.airbnb.epoxy.Typed2EpoxyController
 import dev.razil.folio.PostItemTBindingModel_
 import dev.razil.folio.ProgressItemBindingModel_
-import dev.razil.folio.util.ImageLoader
+import dev.razil.folio.core.data.Post
 import dev.razil.folio.util.OnPostClickListener
 
-class PostController(
-    private val clickListener: OnPostClickListener? = null,
-    imageLoader: ImageLoader
-) :
+class PostController(private val clickListener: OnPostClickListener? = null) :
     Typed2EpoxyController<List<Post>, Boolean>() {
 
     override fun buildModels(posts: List<Post>, isLoading: Boolean) {

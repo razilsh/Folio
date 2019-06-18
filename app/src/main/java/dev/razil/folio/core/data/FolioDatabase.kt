@@ -22,33 +22,14 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui.comments
+package dev.razil.folio.core.data
 
-import com.airbnb.epoxy.TypedEpoxyController
-import dev.razil.folio.commentItem
-import dev.razil.folio.commentPostItem
-import dev.razil.folio.progressItem
-import dev.razil.folio.core.data.Post
-import dev.razil.folio.ui.widgets.IndentedLayout
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
-class CommentController : TypedEpoxyController<Triple<Post, List<Comment>, Boolean>>() {
-    override fun buildModels(data: Triple<Post, List<Comment>, Boolean>) {
-        val (post, comments, isLoading) = data
-        commentPostItem {
-            id(post.id)
-            post(post)
-        }
-        if (isLoading) {
-            progressItem { id("loading${comments.size}") }
-        }
-        comments.forEach { comment ->
-            commentItem {
-                id(comment.id)
-                comment(comment)
-                onBind { model, view, position ->
-                    (view.dataBinding.root as? IndentedLayout)?.setIndentationDepth(comment.depth - 1)
-                }
-            }
-        }
-    }
+@TypeConverters(TypeConverter::class)
+@Database(entities = [Post::class], version = 1, exportSchema = false)
+abstract class FolioDatabase : RoomDatabase() {
+    abstract fun postsDao(): PostDao
 }

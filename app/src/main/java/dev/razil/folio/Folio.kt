@@ -30,6 +30,7 @@ import com.github.piasy.biv.BigImageViewer
 import com.github.piasy.biv.loader.glide.GlideImageLoader
 import dev.razil.folio.core.di.DaggerAppComponent
 import dev.razil.folio.util.Ext
+import dev.razil.folio.util.ImageLoader
 import ru.noties.markwon.Markwon
 import ru.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import ru.noties.markwon.ext.tables.TablePlugin
@@ -58,6 +59,7 @@ class Folio : Application() {
         Ext.with(this)
         BigImageViewer.initialize(GlideImageLoader.with(this))
         TinyDancer.create().show(this)
+        ImageLoader(this)
     }
 
 

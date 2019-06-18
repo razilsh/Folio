@@ -33,12 +33,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.epoxy.DataBindingEpoxyModel
 import com.airbnb.epoxy.OnModelClickListener
 import com.ibm.icu.text.CompactDecimalFormat
-import dev.razil.folio.PostItemBindingModel_
 import dev.razil.folio.PostItemTBindingModel_
+import dev.razil.folio.core.data.Post
+import dev.razil.folio.ui.posts.type
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.flowViaChannel
+import net.dean.jraw.models.Submission
 import java.util.*
 import net.dean.jraw.models.Comment as JrawModelsComment
 
@@ -91,3 +93,20 @@ fun compactFormat(text: String): String? {
 }
 
 typealias OnPostClickListener = OnModelClickListener<PostItemTBindingModel_, DataBindingEpoxyModel.DataBindingHolder>
+
+fun fromSubmission(submission: Submission): Post {
+    return Post(
+        id = submission.id,
+        author = submission.author,
+        title = submission.title,
+        selfText = submission.selfText,
+        score = submission.score.toString(),
+        subreddit = submission.subreddit,
+        thumbnail = submission.thumbnail,
+        totalComments = submission.commentCount.toString(),
+        url = submission.url,
+        type = submission.type(),
+        created = submission.created,
+        edited = submission.edited
+    )
+}

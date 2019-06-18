@@ -22,17 +22,47 @@
  * SOFTWARE.
  */
 
-package dev.razil.folio.ui.posts
+package dev.razil.folio.core.data
 
-data class Post(
-    val id: String,
-    val author: String,
-    val title: String,
-    val selfText: String? = null,
-    val score: String,
-    val subreddit: String,
-    val thumbnail: String? = null,
-    val totalComments: String,
-    val url: String,
-    val type: PostType
-)
+import androidx.room.TypeConverter
+import dev.razil.folio.ui.posts.PostType
+import java.util.*
+
+object TypeConverter {
+    @TypeConverter
+    @JvmStatic
+    fun toTimestamp(date: Date?): Long? {
+        return when (date) {
+            null -> null
+            else -> date.time
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromTimestamp(millis: Long?): Date? {
+        return when (millis) {
+            null -> null
+            else -> Date(millis)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromPostType(type: PostType): String {
+        return type.name.toLowerCase(Locale.ENGLISH)
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toPostType(type: String?): PostType {
+        return when (type) {
+            null -> PostType.NONE
+            "link" -> PostType.LINK
+            "image" -> PostType.IMAGE
+            "rich:video" -> PostType.RICH_VIDEO
+            "hosted:video" -> PostType.HOSTED_VIDEO
+            else -> PostType.UNKNOWN
+        }
+    }
+}

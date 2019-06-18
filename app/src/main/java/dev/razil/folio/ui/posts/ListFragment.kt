@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+@file:Suppress("EXPERIMENTAL_API_USAGE")
+
 package dev.razil.folio.ui.posts
 
 import android.os.Bundle
@@ -35,9 +37,7 @@ import com.airbnb.epoxy.OnModelClickListener
 import dev.razil.folio.Folio
 import dev.razil.folio.R
 import dev.razil.folio.core.di.DaggerViewModelFactory
-import dev.razil.folio.itemanimators.SlideUpAlphaAnimator
-import dev.razil.folio.util.ImageLoader
-import dev.razil.folio.util.divider
+import dev.razil.folio.itemanimators.SlideInOutTopAnimator
 import dev.razil.folio.util.onLoadMore
 import kotlinx.android.synthetic.main.list_fragment.*
 import kotlinx.coroutines.FlowPreview
@@ -70,8 +70,7 @@ class ListFragment : Fragment(R.layout.list_fragment) {
             OnModelClickListener { model, parentView, clickedView, position ->
                 val id = model.post().id
                 clicks.offer(id)
-            },
-            ImageLoader(requireActivity())
+            }
         )
 
         viewModel.posts.observe(viewLifecycleOwner) { (posts, isLoading) ->
@@ -79,8 +78,8 @@ class ListFragment : Fragment(R.layout.list_fragment) {
         }
 
         rv_posts.setController(controller)
-        rv_posts.addItemDecoration(divider(R.drawable.divider))
-        rv_posts.itemAnimator = SlideUpAlphaAnimator()
+        rv_posts.setItemSpacingDp(2)
+        rv_posts.itemAnimator = SlideInOutTopAnimator(rv_posts)
         lifecycleScope.launchWhenCreated {
             rv_posts.onLoadMore(1).collect {
                 viewModel.loadMore()

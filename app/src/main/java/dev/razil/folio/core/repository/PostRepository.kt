@@ -24,9 +24,9 @@
 
 package dev.razil.folio.core.repository
 
+import dev.razil.folio.core.data.FolioDatabase
 import dev.razil.folio.ui.comments.Comment
-import dev.razil.folio.ui.posts.Post
-import dev.razil.folio.ui.posts.type
+import dev.razil.folio.util.fromSubmission
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.dean.jraw.RedditClient
@@ -37,7 +37,10 @@ import net.dean.jraw.tree.CommentNode
 import javax.inject.Inject
 import net.dean.jraw.models.Comment as JrawModelsComment
 
-class PostRepository @Inject constructor(private val accountHelper: AccountHelper) {
+class PostRepository @Inject constructor(
+    private val accountHelper: AccountHelper,
+    private val db: FolioDatabase
+) {
     private val redditClient: RedditClient by lazy { getClient() }
     private val paginator: DefaultPaginator<Submission> by lazy {
         redditClient.frontPage()
@@ -51,21 +54,7 @@ class PostRepository @Inject constructor(private val accountHelper: AccountHelpe
     }
 
     suspend fun posts() = withContext(Dispatchers.IO) {
-        paginator.next()
-            .map {
-                Post(
-                    id = it.id,
-                    author = it.author,
-                    title = it.title,
-                    selfText = it.selfText,
-                    score = it.score.toString(),
-                    subreddit = it.subreddit,
-                    thumbnail = it.thumbnail,
-                    totalComments = it.commentCount.toString(),
-                    url = it.url,
-                    type = it.type()
-                )
-            }
+        paginator.next().map(::fromSubmission)
     }
 
     suspend fun comments(id: String): List<Comment> = withContext(Dispatchers.IO) {

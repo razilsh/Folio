@@ -58,5 +58,6 @@
   <color name="color_sub_bg">#1E1E1E</color>
   <color name="color_swipe_secondary">#262626</color>
   <color name="color_vh">#1E1E1E</color>
+  <color name="window_background">#121212</color>
   <color name="colorTextSecondary">#888</color>
 </resources>

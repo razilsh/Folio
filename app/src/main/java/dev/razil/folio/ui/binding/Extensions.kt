@@ -34,7 +34,7 @@ import com.bumptech.glide.request.transition.Transition
 import dev.razil.folio.GlideApp
 import dev.razil.folio.core.Incomplete
 import dev.razil.folio.core.Result
-import dev.razil.folio.ui.posts.Post
+import dev.razil.folio.core.data.Post
 import dev.razil.folio.util.hasImageFileExtension
 import dev.razil.folio.util.hide
 import dev.razil.folio.util.show

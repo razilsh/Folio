@@ -28,6 +28,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.razil.folio.core.data.Post
 import dev.razil.folio.core.repository.PostRepository
 import dev.razil.folio.ui.comments.Comment
 import dev.razil.folio.util.appendAt
